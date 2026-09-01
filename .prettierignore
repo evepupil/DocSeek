@@ -1,0 +1,5 @@
+dist
+coverage
+.docseek
+.codegraph
+package-lock.json

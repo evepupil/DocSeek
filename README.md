@@ -1,0 +1,49 @@
+# DocSeek
+
+DocSeek is a local semantic documentation locator for AI coding agents. It turns a natural-language question into Markdown file paths, heading hierarchies, and line ranges, then leaves the agent to read the original source.
+
+> Retrieval is navigation, not context generation.
+
+## Status
+
+The MVP is implemented and validated locally. The npm package has not been published yet.
+
+## Usage
+
+```bash
+docseek init
+docseek update
+docseek status
+docseek search "why does scheduler scale-out consider GPU cold starts"
+docseek search "worker lifecycle" --top 5 --path architecture/ --json
+```
+
+The default search output contains only a score, Markdown path, line range, and heading hierarchy. Use `--json` for machine-readable results or `--snippet` for human debugging.
+
+`init` creates `.docseek/config.toml` and `.docseek/index.db`, then adds `/.docseek/` to the project `.gitignore`. `update` only reindexes added and changed files and removes deleted files from the index.
+
+## Requirements
+
+- Node.js 22 or newer
+- Git is recommended for automatic project-root detection
+
+The first `init` downloads the default multilingual model. Its q8 model is about 118 MB and is cached in the user cache directory. Standard proxy environment variables are supported; Windows system proxy settings are detected when those variables are absent.
+
+## Design
+
+The MVP indexes Markdown in the current project with local SQLite, sqlite-vec, FTS5, and a local multilingual embedding model. The internal source model can later accept extra directories, individual files, tags, and cross-project memory without changing the indexing pipeline.
+
+See [docs/需求设计.md](docs/需求设计.md) and [docs/roadmap.md](docs/roadmap.md).
+
+## Development
+
+```bash
+npm install
+npm run gate
+```
+
+The gate checks formatting, strict TypeScript, ESLint, unit and integration tests, the production build, and the npm package contents.
+
+## License
+
+MIT

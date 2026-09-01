@@ -1,0 +1,68 @@
+{
+  "name": "docseek",
+  "version": "0.1.0",
+  "description": "Local semantic documentation locator for coding agents",
+  "type": "module",
+  "bin": {
+    "docseek": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/clean.mjs && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "gate": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm pack --dry-run",
+    "prepublishOnly": "npm run gate"
+  },
+  "keywords": [
+    "semantic-search",
+    "documentation",
+    "cli",
+    "sqlite",
+    "ai-agent"
+  ],
+  "license": "MIT",
+  "overrides": {
+    "adm-zip": "0.6.0",
+    "sharp": "0.35.4"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
+    "better-sqlite3": "^13.0.3",
+    "commander": "^15.0.0",
+    "fast-glob": "^3.3.3",
+    "mdast-util-from-markdown": "^2.0.3",
+    "mdast-util-to-string": "^4.0.0",
+    "smol-toml": "^1.8.0",
+    "sqlite-vec": "^0.1.9",
+    "undici": "^8.10.1",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^22.20.1",
+    "eslint": "^10.9.1",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.69.0",
+    "vitest": "^4.1.11"
+  },
+  "allowScripts": {
+    "better-sqlite3@13.0.3": true,
+    "onnxruntime-node@1.24.3": true,
+    "protobufjs@7.6.6": true
+  }
+}
