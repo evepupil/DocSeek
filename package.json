@@ -7,7 +7,17 @@
     "docseek": "./dist/index.js"
   },
   "files": [
-    "dist",
+    "dist/application",
+    "dist/cli",
+    "dist/config",
+    "dist/domain",
+    "dist/embedding",
+    "dist/index.*",
+    "dist/markdown",
+    "dist/project",
+    "dist/search",
+    "dist/sources",
+    "dist/storage",
     "README.md",
     "LICENSE"
   ],
@@ -22,6 +32,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "eval:quality": "npm run build && node scripts/evaluate-search.mjs",
     "gate": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm pack --dry-run",
     "prepublishOnly": "npm run gate"
   },

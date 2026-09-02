@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "thresholds": {
+    "positive_recall_at_5": 0.9,
+    "positive_top_1": 0.7,
+    "exact_top_1": 0.9,
+    "negative_rejection": 0.9,
+    "determinism": 1
+  },
+  "cases": [
+    {
+      "id": "external-source-zh",
+      "category": "semantic",
+      "query": "以后要把项目外部的资料目录接进来，应该扩展哪一层",
+      "expected": [{ "path": "docs/架构设计.md", "heading": "外部文档" }]
+    },
+    {
+      "id": "heading-lines-zh",
+      "category": "semantic",
+      "query": "怎样保证 Markdown 标题层级和原文行号能够对应",
+      "expected": [{ "path": "docs/模块设计/文档索引.md", "heading": "结构与数据流" }]
+    },
+    {
+      "id": "incremental-paraphrase-zh",
+      "category": "semantic",
+      "query": "怎样避免每次都重新处理所有资料",
+      "expected": [
+        { "path": "docs/模块设计/文档索引.md", "heading": "关键决策" },
+        { "path": "docs/技术设计.md", "heading": "增量更新" }
+      ]
+    },
+    {
+      "id": "model-change-zh",
+      "category": "semantic",
+      "query": "模型配置改了之后增量索引会发生什么",
+      "expected": [
+        { "path": "docs/需求设计.md", "heading": "docseek update" },
+        { "path": "docs/技术设计.md", "heading": "增量更新" }
+      ]
+    },
+    {
+      "id": "project-root-zh",
+      "category": "semantic",
+      "query": "命令从子目录运行时怎么找到项目根目录",
+      "expected": [
+        { "path": "docs/模块设计/项目与配置.md", "heading": "职责与边界" },
+        { "path": "docs/模块设计/项目与配置.md", "heading": "当前实现" },
+        { "path": "docs/需求设计.md", "heading": "docseek init" }
+      ]
+    },
+    {
+      "id": "cross-project-memory-zh",
+      "category": "semantic",
+      "query": "以后整合多个项目的记忆应该从哪里扩展",
+      "expected": [{ "path": "docs/架构设计.md", "heading": "跨项目与记忆" }]
+    },
+    {
+      "id": "tag-filter-path",
+      "category": "filter",
+      "query": "标签",
+      "path": "模块设计/",
+      "expected": [{ "path": "docs/模块设计/项目与配置.md", "heading": "待扩展项" }]
+    },
+    {
+      "id": "changed-files-en",
+      "category": "semantic",
+      "query": "How are changed files updated without rebuilding the whole index?",
+      "expected": [{ "path": "README.md", "heading": "Usage" }]
+    },
+    {
+      "id": "project-root-en",
+      "category": "semantic",
+      "query": "How does the CLI find the project root?",
+      "expected": [{ "path": "README.md", "heading": "Requirements" }]
+    },
+    {
+      "id": "rrf-exact",
+      "category": "exact",
+      "query": "Reciprocal Rank Fusion",
+      "expected": [{ "path": "docs/技术设计.md", "heading": "向量与结果融合" }]
+    },
+    {
+      "id": "model-cache-exact",
+      "category": "exact",
+      "query": "DOCSEEK_MODEL_CACHE",
+      "expected": [{ "path": "docs/技术设计.md", "heading": "发布与兼容" }]
+    },
+    {
+      "id": "sqlite-vec-exact",
+      "category": "exact",
+      "query": "sqlite-vec",
+      "expected": [
+        { "path": "docs/技术设计.md", "heading": "技术基线" },
+        { "path": "docs/模块设计/向量与存储.md", "heading": "关键决策" },
+        { "path": "docs/模块设计/向量与存储.md", "heading": "当前实现" }
+      ]
+    },
+    {
+      "id": "scheduler-keywords",
+      "category": "exact",
+      "query": "scheduler GPU cold starts",
+      "expected": [{ "path": "README.md", "heading": "Usage" }]
+    },
+    {
+      "id": "navigation-principle",
+      "category": "exact",
+      "query": "Retrieval is navigation, not context generation",
+      "expected": [{ "path": "README.md", "heading": "DocSeek" }]
+    },
+    {
+      "id": "no-quantum-banana",
+      "category": "negative",
+      "query": "量子香蕉协议 zxqv-9999 的握手流程"
+    },
+    {
+      "id": "no-cooking",
+      "category": "negative",
+      "query": "红烧肉应该放多少糖"
+    },
+    {
+      "id": "no-vacation-policy",
+      "category": "negative",
+      "query": "employee vacation approval policy"
+    },
+    {
+      "id": "no-kubernetes-policy",
+      "category": "negative",
+      "query": "如何给 Kubernetes 配置网络策略"
+    },
+    {
+      "id": "no-mars-tax",
+      "category": "negative",
+      "query": "火星殖民地的空气税怎么计算"
+    },
+    {
+      "id": "no-medical-dose",
+      "category": "negative",
+      "query": "儿童退烧药应该服用多少剂量"
+    },
+    {
+      "id": "no-hotel-cancellation",
+      "category": "negative",
+      "query": "hotel booking cancellation refund policy"
+    },
+    {
+      "id": "no-video-codec",
+      "category": "negative",
+      "query": "视频编码器的关键帧间隔怎么设置"
+    },
+    {
+      "id": "no-stock-tax",
+      "category": "negative",
+      "query": "股票组合再平衡会产生多少税"
+    },
+    {
+      "id": "no-push-certificate",
+      "category": "negative",
+      "query": "iOS 推送证书过期后怎样续期"
+    }
+  ]
+}

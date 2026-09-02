@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
+import { z } from "zod";
 
 import type { EmbeddingProvider, EmbeddingProviderFactory } from "../../src/domain/contracts.js";
 import { initializeProject } from "../../src/application/init-project.js";
@@ -161,6 +162,56 @@ describe("DocSeek integration", () => {
         }),
       ],
     });
+
+    standardOutput = "";
+    const explainedExitCode = await runCli(
+      ["search", "cold start", "--json", "--top", "1", "--explain"],
+      {
+        cwd: () => project,
+        writeOut: (value) => {
+          standardOutput += value;
+        },
+        writeError: (value) => {
+          standardError += value;
+        },
+        createEmbeddingProvider: createProvider,
+      },
+    );
+    const explainedJson: unknown = JSON.parse(standardOutput);
+    const explained = z
+      .object({
+        results: z.array(
+          z.object({
+            explanation: z.object({
+              semantic_strength: z.number(),
+              confidence: z.number(),
+            }),
+          }),
+        ),
+        diagnostics: z.object({
+          query_terms: z.array(z.string()),
+          timings_ms: z.record(z.string(), z.number()),
+        }),
+      })
+      .parse(explainedJson);
+    expect(explainedExitCode).toBe(0);
+    expect(explained.results).toHaveLength(1);
+    expect(explained.results[0]?.explanation.confidence).toBeGreaterThan(0);
+    expect(explained.diagnostics.query_terms.length).toBeGreaterThan(0);
+    expect(explained.diagnostics.timings_ms["total"]).toBeTypeOf("number");
+  });
+
+  it("returns no locations for an unsupported query", async () => {
+    const project = await createProject();
+    await initializeProject(project, createProvider);
+
+    const results = await searchDocs(
+      project,
+      { query: "zxqv-9999 量子香蕉协议", top: 5, includeSnippet: false },
+      createProvider,
+    );
+
+    expect(results).toEqual([]);
   });
 
   it("indexes multiple sources and applies source tags without changing the pipeline", async () => {

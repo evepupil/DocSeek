@@ -1,9 +1,25 @@
 import { describe, expect, it } from "vitest";
 
-import type { SearchCandidate } from "../../src/domain/types.js";
+import type { SearchCandidate, SearchConfig } from "../../src/domain/types.js";
 import { fuseCandidates } from "../../src/search/fusion.js";
+import { tokenizeForFts } from "../../src/search/terms.js";
 
-function candidate(chunkId: number, path: string, rank: number): SearchCandidate {
+const searchConfig: SearchConfig = {
+  vectorWeight: 0.45,
+  keywordWeight: 0.55,
+  semanticBestDistance: 0.09,
+  semanticWeakDistance: 0.15,
+  minimumConfidence: 0.5,
+  candidatePool: 100,
+};
+
+function candidate(
+  chunkId: number,
+  path: string,
+  rank: number,
+  content = "Relevant content",
+  distance?: number,
+): SearchCandidate {
   return {
     chunkId,
     sourceId: "project",
@@ -12,28 +28,81 @@ function candidate(chunkId: number, path: string, rank: number): SearchCandidate
     startLine: 10,
     endLine: 20,
     heading: ["Heading"],
-    content: "Relevant content",
+    content,
+    indexedTerms: tokenizeForFts(`Heading ${content}`),
     rank,
+    ...(distance !== undefined ? { distance } : {}),
+  };
+}
+
+function options(overrides?: { readonly explain?: boolean; readonly snippet?: boolean }) {
+  return {
+    top: 5,
+    includeSnippet: overrides?.snippet ?? false,
+    includeExplanation: overrides?.explain ?? false,
+    queryTerms: ["relevant"],
+    config: searchConfig,
   };
 }
 
 describe("fuseCandidates", () => {
   it("promotes results found by both retrieval routes", () => {
     const results = fuseCandidates(
-      [candidate(1, "semantic.md", 1), candidate(2, "both.md", 2)],
+      [
+        candidate(1, "semantic.md", 1, "Relevant content", 0.1),
+        candidate(2, "both.md", 2, "Relevant content", 0.11),
+      ],
       [candidate(2, "both.md", 1), candidate(3, "keyword.md", 2)],
-      3,
-      false,
+      options(),
     );
 
     expect(results[0]?.path).toBe("both.md");
-    expect(results[0]?.score).toBe(1);
   });
 
-  it("uses stable path ordering for exact ties", () => {
-    const results = fuseCandidates([candidate(1, "b.md", 1), candidate(2, "a.md", 1)], [], 2, true);
+  it("lets an exact keyword result outrank weak semantic candidates", () => {
+    const results = fuseCandidates(
+      [
+        candidate(1, "semantic.md", 1, "Generic model configuration", 0.13),
+        candidate(2, "exact.md", 60, "GPU scheduler cold starts", 0.17),
+      ],
+      [candidate(2, "exact.md", 1, "GPU scheduler cold starts")],
+      {
+        ...options(),
+        queryTerms: ["gpu", "scheduler"],
+      },
+    );
+
+    expect(results[0]?.path).toBe("exact.md");
+  });
+
+  it("filters candidates with no credible semantic or lexical signal", () => {
+    const results = fuseCandidates(
+      [candidate(1, "unrelated.md", 1, "Documentation index", 0.14)],
+      [candidate(1, "unrelated.md", 1, "Documentation index")],
+      {
+        ...options(),
+        queryTerms: ["zxqv-9999", "香蕉协议"],
+      },
+    );
+
+    expect(results).toEqual([]);
+  });
+
+  it("uses stable ordering and exposes absolute scores with optional diagnostics", () => {
+    const results = fuseCandidates(
+      [
+        candidate(1, "b.md", 1, "Relevant content", 0.11),
+        candidate(2, "a.md", 1, "Relevant content", 0.11),
+      ],
+      [],
+      options({ explain: true, snippet: true }),
+    );
 
     expect(results.map((result) => result.path)).toEqual(["a.md", "b.md"]);
+    expect(results[0]?.score).toBeLessThan(1);
     expect(results[0]?.snippet).toBe("Relevant content");
+    expect(results[0]?.explanation?.vectorRank).toBe(1);
+    expect(results[0]?.explanation?.lexicalStrength).toBeGreaterThan(0);
+    expect(results[0]?.explanation?.confidence).toBeGreaterThan(0);
   });
 });

@@ -5,7 +5,7 @@ import { errorMessage } from "../domain/errors.js";
 import { initializeProject } from "../application/init-project.js";
 import { updateProject } from "../application/update-project.js";
 import { getStatus } from "../application/get-status.js";
-import { searchDocs } from "../application/search-docs.js";
+import { searchDocsDetailed } from "../application/search-docs.js";
 import { createEmbeddingProvider } from "../embedding/factory.js";
 import { formatSearchJson, formatSearchText, formatStatusText } from "./output.js";
 
@@ -91,6 +91,7 @@ export function createCli(dependencies: CliDependencies = defaultDependencies): 
     .option("--path <path>", "limit results to matching paths")
     .option("--json", "print machine-readable JSON")
     .option("--snippet", "include short result snippets")
+    .option("--explain", "include retrieval signals and timing diagnostics")
     .action(
       async (
         queryParts: readonly string[],
@@ -99,20 +100,27 @@ export function createCli(dependencies: CliDependencies = defaultDependencies): 
           readonly path?: string;
           readonly json?: boolean;
           readonly snippet?: boolean;
+          readonly explain?: boolean;
         },
       ) => {
         const query = queryParts.join(" ").trim();
-        const results = await searchDocs(
+        const response = await searchDocsDetailed(
           dependencies.cwd(),
           {
             query,
             top: options.top,
             includeSnippet: options.snippet ?? false,
+            includeExplanation: options.explain ?? false,
             ...(options.path ? { path: options.path } : {}),
           },
           dependencies.createEmbeddingProvider,
         );
-        dependencies.writeOut(options.json ? formatSearchJson(results) : formatSearchText(results));
+        const diagnostics = options.explain ? response.diagnostics : undefined;
+        dependencies.writeOut(
+          options.json
+            ? formatSearchJson(response.results, diagnostics)
+            : formatSearchText(response.results, diagnostics),
+        );
       },
     );
 

@@ -17,6 +17,15 @@ export interface ChunkingConfig {
   readonly maxChars: number;
 }
 
+export interface SearchConfig {
+  readonly vectorWeight: number;
+  readonly keywordWeight: number;
+  readonly semanticBestDistance: number;
+  readonly semanticWeakDistance: number;
+  readonly minimumConfidence: number;
+  readonly candidatePool: number;
+}
+
 export interface SourceConfig {
   readonly id: string;
   readonly kind: SourceKind;
@@ -31,6 +40,7 @@ export interface DocSeekConfig {
   readonly projectId: string;
   readonly embedding: EmbeddingConfig;
   readonly chunking: ChunkingConfig;
+  readonly search: SearchConfig;
   readonly sources: readonly SourceConfig[];
 }
 
@@ -109,9 +119,20 @@ export interface SearchRequest {
   readonly top: number;
   readonly path?: string;
   readonly includeSnippet: boolean;
+  readonly includeExplanation?: boolean;
   readonly collectionIds?: readonly string[];
   readonly sourceIds?: readonly string[];
   readonly tags?: readonly string[];
+}
+
+export interface SearchExplanation {
+  readonly vectorRank?: number;
+  readonly keywordRank?: number;
+  readonly vectorDistance?: number;
+  readonly semanticStrength: number;
+  readonly lexicalStrength: number;
+  readonly fusionStrength: number;
+  readonly confidence: number;
 }
 
 export interface SearchResult {
@@ -121,6 +142,27 @@ export interface SearchResult {
   readonly heading: readonly string[];
   readonly score: number;
   readonly snippet?: string;
+  readonly explanation?: SearchExplanation;
+}
+
+export interface SearchTimings {
+  readonly embeddingMs: number;
+  readonly vectorSearchMs: number;
+  readonly keywordSearchMs: number;
+  readonly fusionMs: number;
+  readonly totalMs: number;
+}
+
+export interface SearchDiagnostics {
+  readonly queryTerms: readonly string[];
+  readonly vectorCandidates: number;
+  readonly keywordCandidates: number;
+  readonly timings: SearchTimings;
+}
+
+export interface SearchResponse {
+  readonly results: readonly SearchResult[];
+  readonly diagnostics: SearchDiagnostics;
 }
 
 export interface SearchCandidate {
@@ -132,6 +174,7 @@ export interface SearchCandidate {
   readonly endLine: number;
   readonly heading: readonly string[];
   readonly content: string;
+  readonly indexedTerms: readonly string[];
   readonly rank: number;
   readonly distance?: number;
 }

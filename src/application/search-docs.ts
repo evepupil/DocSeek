@@ -1,18 +1,35 @@
 import type { EmbeddingProviderFactory } from "../domain/contracts.js";
 import { DocSeekError } from "../domain/errors.js";
-import type { SearchRequest, SearchResult } from "../domain/types.js";
+import type { SearchRequest, SearchResponse, SearchResult } from "../domain/types.js";
 import { loadProjectContext } from "../config/config-file.js";
 import { createEmbeddingProvider } from "../embedding/factory.js";
 import { locateInitializedProject } from "../project/find-root.js";
-import { fuseCandidates } from "../search/fusion.js";
-import { buildFtsQuery } from "../search/terms.js";
 import { IndexStore } from "../storage/index-store.js";
+import { executeSearch } from "./execute-search.js";
 
-export async function searchDocs(
+function emptySearchResponse(): SearchResponse {
+  return {
+    results: [],
+    diagnostics: {
+      queryTerms: [],
+      vectorCandidates: 0,
+      keywordCandidates: 0,
+      timings: {
+        embeddingMs: 0,
+        vectorSearchMs: 0,
+        keywordSearchMs: 0,
+        fusionMs: 0,
+        totalMs: 0,
+      },
+    },
+  };
+}
+
+export async function searchDocsDetailed(
   startDir: string,
   request: SearchRequest,
   createProvider: EmbeddingProviderFactory = createEmbeddingProvider,
-): Promise<readonly SearchResult[]> {
+): Promise<SearchResponse> {
   if (request.query.trim().length === 0) {
     throw new DocSeekError("QUERY_EMPTY", "Search query cannot be empty.");
   }
@@ -26,7 +43,7 @@ export async function searchDocs(
   const counts = store.counts(context.config.projectId);
   if (counts.chunks === 0) {
     store.close();
-    return [];
+    return emptySearchResponse();
   }
 
   const provider = createProvider(context.config.embedding);
@@ -40,20 +57,14 @@ export async function searchDocs(
     );
   }
 
-  const scopedRequest: SearchRequest = {
-    ...request,
-    collectionIds: request.collectionIds ?? [context.config.projectId],
-  };
-  const candidateLimit = Math.min(500, Math.max(50, request.top * 10));
-
   try {
-    const queryVector = await provider.embedQuery(request.query);
-    const vectorCandidates = store.vectorCandidates(queryVector, scopedRequest, candidateLimit);
-    const ftsQuery = buildFtsQuery(request.query);
-    const keywordCandidates = ftsQuery
-      ? store.keywordCandidates(ftsQuery, scopedRequest, candidateLimit)
-      : [];
-    return fuseCandidates(vectorCandidates, keywordCandidates, request.top, request.includeSnippet);
+    return await executeSearch({
+      store,
+      provider,
+      collectionId: context.config.projectId,
+      config: context.config.search,
+      request,
+    });
   } finally {
     try {
       store.close();
@@ -61,4 +72,12 @@ export async function searchDocs(
       await provider.dispose();
     }
   }
+}
+
+export async function searchDocs(
+  startDir: string,
+  request: SearchRequest,
+  createProvider: EmbeddingProviderFactory = createEmbeddingProvider,
+): Promise<readonly SearchResult[]> {
+  return (await searchDocsDetailed(startDir, request, createProvider)).results;
 }

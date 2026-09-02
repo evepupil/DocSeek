@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildFtsQuery, tokenizeForFts } from "../../src/search/terms.js";
+import { buildFtsQuery, tokenizeForFts, tokenizeForSearch } from "../../src/search/terms.js";
 
 describe("FTS term generation", () => {
   it("keeps technical identifiers and adds Chinese bigrams", () => {
@@ -19,5 +19,13 @@ describe("FTS term generation", () => {
 
   it("returns no FTS query for punctuation only", () => {
     expect(buildFtsQuery("--- / ...")).toBeUndefined();
+  });
+
+  it("removes single characters and common question words from search terms", () => {
+    const terms = tokenizeForSearch("为什么要查 GPU 冷启动");
+
+    expect(terms).toEqual(expect.arrayContaining(["gpu", "冷启", "冷启动", "启动"]));
+    expect(terms).not.toContain("冷");
+    expect(terms).not.toContain("为什么");
   });
 });

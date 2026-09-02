@@ -16,9 +16,12 @@ docseek update
 docseek status
 docseek search "why does scheduler scale-out consider GPU cold starts"
 docseek search "worker lifecycle" --top 5 --path architecture/ --json
+docseek search "worker lifecycle" --explain
 ```
 
-The default search output contains only a score, Markdown path, line range, and heading hierarchy. Use `--json` for machine-readable results or `--snippet` for human debugging.
+The default search output contains only a score, Markdown path, line range, and heading hierarchy. Use `--json` for machine-readable results, `--snippet` for a short preview, or `--explain` for retrieval signals and timing diagnostics.
+
+`--top` is a maximum. DocSeek can return fewer results, including none, when the available locations have weak semantic and lexical support.
 
 `init` creates `.docseek/config.toml` and `.docseek/index.db`, then adds `/.docseek/` to the project `.gitignore`. `update` only reindexes added and changed files and removes deleted files from the index.
 
@@ -40,9 +43,10 @@ See [docs/需求设计.md](docs/需求设计.md) and [docs/roadmap.md](docs/road
 ```bash
 npm install
 npm run gate
+npm run eval:quality
 ```
 
-The gate checks formatting, strict TypeScript, ESLint, unit and integration tests, the production build, and the npm package contents.
+The gate checks formatting, strict TypeScript, ESLint, unit and integration tests, the production build, and the npm package contents. The quality evaluation is separate because it uses the real local model and the DocSeek repository's own index.
 
 ## License
 

@@ -14,6 +14,8 @@ interface CandidateRow {
   readonly end_line: number;
   readonly heading_json: string;
   readonly content: string;
+  readonly heading_terms: string;
+  readonly content_terms: string;
   readonly distance?: number;
 }
 
@@ -80,6 +82,9 @@ function candidateFromRow(row: CandidateRow, rank: number): SearchCandidate {
     endLine: row.end_line,
     heading: parseHeading(row.heading_json),
     content: row.content,
+    indexedTerms: `${row.heading_terms} ${row.content_terms}`
+      .split(/\s+/u)
+      .filter((term) => term.length > 0),
     rank,
     ...(typeof row.distance === "number" ? { distance: row.distance } : {}),
   };
@@ -104,9 +109,12 @@ export function findVectorCandidates(
          c.end_line,
          c.heading_json,
          c.content,
+         f.heading_terms,
+         f.content_terms,
          vec_distance_cosine(e.embedding, ?) AS distance
        FROM chunk_embeddings e
        JOIN chunks c ON c.id = e.chunk_id
+       JOIN chunks_fts f ON f.rowid = c.id
        JOIN documents d ON d.id = c.document_id
        JOIN sources s ON s.id = d.source_id
        ${where}
@@ -136,6 +144,8 @@ export function findKeywordCandidates(
          c.end_line,
          c.heading_json,
          c.content,
+         chunks_fts.heading_terms,
+         chunks_fts.content_terms,
          bm25(chunks_fts, 4.0, 1.0) AS keyword_score
        FROM chunks_fts
        JOIN chunks c ON c.id = chunks_fts.rowid

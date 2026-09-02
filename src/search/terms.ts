@@ -1,5 +1,38 @@
 const hanSequence = /\p{Script=Han}+/gu;
 const latinToken = /[\p{Script=Latin}\p{N}_./:-]+/gu;
+const hanOnly = /^\p{Script=Han}+$/u;
+const queryStopWords = new Set([
+  "什么",
+  "为什么",
+  "怎么",
+  "如何",
+  "应该",
+  "可以",
+  "需要",
+  "之后",
+  "以后",
+  "这个",
+  "那个",
+  "what",
+  "where",
+  "when",
+  "why",
+  "how",
+  "does",
+  "do",
+  "are",
+  "is",
+  "the",
+  "a",
+  "an",
+  "to",
+  "of",
+  "in",
+  "for",
+  "with",
+  "be",
+  "can",
+]);
 
 function addLatinTerms(text: string, terms: Set<string>): void {
   for (const match of text.matchAll(latinToken)) {
@@ -59,8 +92,20 @@ export function buildFtsText(text: string): string {
   return tokenizeForFts(text).join(" ");
 }
 
+export function tokenizeForSearch(text: string): readonly string[] {
+  return tokenizeForFts(text).filter((term) => {
+    if (queryStopWords.has(term) || term.length < 2) {
+      return false;
+    }
+    if (!hanOnly.test(term)) {
+      return true;
+    }
+    return (term.match(/\p{Script=Han}/gu)?.length ?? 0) >= 2;
+  });
+}
+
 export function buildFtsQuery(text: string): string | undefined {
-  const terms = tokenizeForFts(text);
+  const terms = tokenizeForSearch(text);
   if (terms.length === 0) {
     return undefined;
   }

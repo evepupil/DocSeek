@@ -17,6 +17,26 @@ const sourceSchema = z.strictObject({
   tags: z.array(z.string().trim().min(1)).default([]),
 });
 
+const defaultSearchConfig = {
+  vector_weight: 0.45,
+  keyword_weight: 0.55,
+  semantic_best_distance: 0.09,
+  semantic_weak_distance: 0.15,
+  minimum_confidence: 0.5,
+  candidate_pool: 100,
+};
+
+const searchSchema = z
+  .strictObject({
+    vector_weight: z.number().min(0).max(1),
+    keyword_weight: z.number().min(0).max(1),
+    semantic_best_distance: z.number().min(0).max(2),
+    semantic_weak_distance: z.number().min(0).max(2),
+    minimum_confidence: z.number().min(0).max(1),
+    candidate_pool: z.int().min(10).max(500),
+  })
+  .default(defaultSearchConfig);
+
 export const rawConfigSchema = z
   .strictObject({
     version: z.literal(CONFIG_VERSION),
@@ -32,9 +52,24 @@ export const rawConfigSchema = z
     chunking: z.strictObject({
       max_chars: z.int().min(256).max(32_000),
     }),
+    search: searchSchema,
     sources: z.array(sourceSchema).min(1),
   })
   .superRefine((config, context) => {
+    if (config.search.vector_weight + config.search.keyword_weight <= 0) {
+      context.addIssue({
+        code: "custom",
+        message: "At least one search weight must be greater than zero",
+        path: ["search"],
+      });
+    }
+    if (config.search.semantic_best_distance >= config.search.semantic_weak_distance) {
+      context.addIssue({
+        code: "custom",
+        message: "semantic_best_distance must be smaller than semantic_weak_distance",
+        path: ["search", "semantic_best_distance"],
+      });
+    }
     const seen = new Set<string>();
     for (const [index, source] of config.sources.entries()) {
       if (seen.has(source.id)) {
@@ -63,6 +98,14 @@ export function fromRawConfig(raw: RawConfig): DocSeekConfig {
       batchSize: raw.embedding.batch_size,
     },
     chunking: { maxChars: raw.chunking.max_chars },
+    search: {
+      vectorWeight: raw.search.vector_weight,
+      keywordWeight: raw.search.keyword_weight,
+      semanticBestDistance: raw.search.semantic_best_distance,
+      semanticWeakDistance: raw.search.semantic_weak_distance,
+      minimumConfidence: raw.search.minimum_confidence,
+      candidatePool: raw.search.candidate_pool,
+    },
     sources: raw.sources.map((source) => ({
       id: source.id,
       kind: source.kind,
@@ -87,6 +130,14 @@ export function toRawConfig(config: DocSeekConfig): RawConfig {
       batch_size: config.embedding.batchSize,
     },
     chunking: { max_chars: config.chunking.maxChars },
+    search: {
+      vector_weight: config.search.vectorWeight,
+      keyword_weight: config.search.keywordWeight,
+      semantic_best_distance: config.search.semanticBestDistance,
+      semantic_weak_distance: config.search.semanticWeakDistance,
+      minimum_confidence: config.search.minimumConfidence,
+      candidate_pool: config.search.candidatePool,
+    },
     sources: config.sources.map((source) => ({
       id: source.id,
       kind: source.kind,
@@ -111,6 +162,7 @@ export function createDefaultConfig(): DocSeekConfig {
       batch_size: 8,
     },
     chunking: { max_chars: 1800 },
+    search: defaultSearchConfig,
     sources: [
       {
         id: "project",

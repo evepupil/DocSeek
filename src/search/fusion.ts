@@ -1,15 +1,19 @@
-import type { SearchCandidate, SearchResult } from "../domain/types.js";
+import type { SearchCandidate, SearchConfig, SearchResult } from "../domain/types.js";
+import { scoreCandidate } from "./scoring.js";
 
 interface RankedCandidate {
   readonly candidate: SearchCandidate;
-  readonly rawScore: number;
   readonly vectorRank?: number;
   readonly keywordRank?: number;
 }
 
-const VECTOR_WEIGHT = 0.7;
-const KEYWORD_WEIGHT = 0.3;
-const RRF_CONSTANT = 60;
+export interface FusionOptions {
+  readonly top: number;
+  readonly includeSnippet: boolean;
+  readonly includeExplanation: boolean;
+  readonly queryTerms: readonly string[];
+  readonly config: SearchConfig;
+}
 
 function snippet(content: string, maxLength = 240): string {
   const compact = content.replace(/\s+/gu, " ").trim();
@@ -22,59 +26,84 @@ function snippet(content: string, maxLength = 240): string {
 export function fuseCandidates(
   vectorCandidates: readonly SearchCandidate[],
   keywordCandidates: readonly SearchCandidate[],
-  top: number,
-  includeSnippet: boolean,
+  options: FusionOptions,
 ): readonly SearchResult[] {
   const merged = new Map<number, RankedCandidate>();
 
   for (const candidate of vectorCandidates) {
-    merged.set(candidate.chunkId, {
-      candidate,
-      vectorRank: candidate.rank,
-      rawScore: VECTOR_WEIGHT / (RRF_CONSTANT + candidate.rank),
-    });
+    merged.set(candidate.chunkId, { candidate, vectorRank: candidate.rank });
   }
 
   for (const candidate of keywordCandidates) {
     const existing = merged.get(candidate.chunkId);
     merged.set(candidate.chunkId, {
       candidate: existing?.candidate ?? candidate,
-      ...(existing?.vectorRank ? { vectorRank: existing.vectorRank } : {}),
+      ...(existing?.vectorRank !== undefined ? { vectorRank: existing.vectorRank } : {}),
       keywordRank: candidate.rank,
-      rawScore: (existing?.rawScore ?? 0) + KEYWORD_WEIGHT / (RRF_CONSTANT + candidate.rank),
     });
   }
 
-  const ranked = [...merged.values()].sort((left, right) => {
-    const scoreOrder = right.rawScore - left.rawScore;
-    if (scoreOrder !== 0) {
-      return scoreOrder;
-    }
-    const vectorOrder =
-      (left.vectorRank ?? Number.MAX_SAFE_INTEGER) - (right.vectorRank ?? Number.MAX_SAFE_INTEGER);
-    if (vectorOrder !== 0) {
-      return vectorOrder;
-    }
-    const keywordOrder =
-      (left.keywordRank ?? Number.MAX_SAFE_INTEGER) -
-      (right.keywordRank ?? Number.MAX_SAFE_INTEGER);
-    if (keywordOrder !== 0) {
-      return keywordOrder;
-    }
-    const pathOrder = left.candidate.path.localeCompare(right.candidate.path);
-    if (pathOrder !== 0) {
-      return pathOrder;
-    }
-    return left.candidate.startLine - right.candidate.startLine;
-  });
+  const ranked = [...merged.values()]
+    .map((entry) => ({
+      ...entry,
+      signals: scoreCandidate(
+        entry.candidate,
+        options.queryTerms,
+        entry.vectorRank,
+        entry.keywordRank,
+        options.config,
+      ),
+    }))
+    .filter((entry) => entry.signals.trusted)
+    .sort((left, right) => {
+      const scoreOrder = right.signals.score - left.signals.score;
+      if (scoreOrder !== 0) {
+        return scoreOrder;
+      }
+      const confidenceOrder =
+        right.signals.explanation.confidence - left.signals.explanation.confidence;
+      if (confidenceOrder !== 0) {
+        return confidenceOrder;
+      }
+      const vectorOrder =
+        (left.vectorRank ?? Number.MAX_SAFE_INTEGER) -
+        (right.vectorRank ?? Number.MAX_SAFE_INTEGER);
+      if (vectorOrder !== 0) {
+        return vectorOrder;
+      }
+      const keywordOrder =
+        (left.keywordRank ?? Number.MAX_SAFE_INTEGER) -
+        (right.keywordRank ?? Number.MAX_SAFE_INTEGER);
+      if (keywordOrder !== 0) {
+        return keywordOrder;
+      }
+      const pathOrder = left.candidate.path.localeCompare(right.candidate.path);
+      if (pathOrder !== 0) {
+        return pathOrder;
+      }
+      return left.candidate.startLine - right.candidate.startLine;
+    });
 
-  const maximum = ranked[0]?.rawScore ?? 1;
-  return ranked.slice(0, top).map(({ candidate, rawScore }) => ({
+  return ranked.slice(0, options.top).map(({ candidate, signals }) => ({
     path: candidate.path,
     startLine: candidate.startLine,
     endLine: candidate.endLine,
     heading: candidate.heading,
-    score: Number((rawScore / maximum).toFixed(4)),
-    ...(includeSnippet ? { snippet: snippet(candidate.content) } : {}),
+    score: Number(signals.score.toFixed(4)),
+    ...(options.includeSnippet ? { snippet: snippet(candidate.content) } : {}),
+    ...(options.includeExplanation
+      ? {
+          explanation: {
+            ...signals.explanation,
+            semanticStrength: Number(signals.explanation.semanticStrength.toFixed(4)),
+            lexicalStrength: Number(signals.explanation.lexicalStrength.toFixed(4)),
+            fusionStrength: Number(signals.explanation.fusionStrength.toFixed(4)),
+            confidence: Number(signals.explanation.confidence.toFixed(4)),
+            ...(signals.explanation.vectorDistance !== undefined
+              ? { vectorDistance: Number(signals.explanation.vectorDistance.toFixed(6)) }
+              : {}),
+          },
+        }
+      : {}),
   }));
 }
