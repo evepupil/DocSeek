@@ -4,7 +4,7 @@
   "description": "Local semantic documentation locator for coding agents",
   "type": "module",
   "bin": {
-    "docseek": "./dist/index.js"
+    "docseek": "dist/index.js"
   },
   "files": [
     "dist/application",

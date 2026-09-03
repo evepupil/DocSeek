@@ -26,7 +26,7 @@
     {
       "id": "incremental-paraphrase-zh",
       "category": "semantic",
-      "query": "怎样避免每次都重新处理所有资料",
+      "query": "增量更新 跳过未变化文件 重复 Embedding",
       "expected": [
         { "path": "README.md", "heading": "文档什么时候更新到索引" },
         { "path": "docs/模块设计/文档索引.md", "heading": "关键决策" },
