@@ -87,7 +87,7 @@ export function createCli(dependencies: CliDependencies = defaultDependencies): 
     .command("search")
     .description("Locate relevant Markdown sections")
     .argument("<query...>", "natural-language query")
-    .option("--top <number>", "maximum results", positiveInteger, 5)
+    .option("--top <number>", "maximum results", positiveInteger)
     .option("--path <path>", "limit results to matching paths")
     .option("--json", "print machine-readable JSON")
     .option("--snippet", "include short result snippets")
@@ -96,7 +96,7 @@ export function createCli(dependencies: CliDependencies = defaultDependencies): 
       async (
         queryParts: readonly string[],
         options: {
-          readonly top: number;
+          readonly top?: number;
           readonly path?: string;
           readonly json?: boolean;
           readonly snippet?: boolean;
@@ -108,9 +108,9 @@ export function createCli(dependencies: CliDependencies = defaultDependencies): 
           dependencies.cwd(),
           {
             query,
-            top: options.top,
             includeSnippet: options.snippet ?? false,
             includeExplanation: options.explain ?? false,
+            ...(options.top !== undefined ? { top: options.top } : {}),
             ...(options.path ? { path: options.path } : {}),
           },
           dependencies.createEmbeddingProvider,

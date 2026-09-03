@@ -33,7 +33,10 @@ export async function searchDocsDetailed(
   if (request.query.trim().length === 0) {
     throw new DocSeekError("QUERY_EMPTY", "Search query cannot be empty.");
   }
-  if (!Number.isSafeInteger(request.top) || request.top < 1 || request.top > 100) {
+  if (
+    request.top !== undefined &&
+    (!Number.isSafeInteger(request.top) || request.top < 1 || request.top > 100)
+  ) {
     throw new DocSeekError("TOP_INVALID", "Search result count must be an integer from 1 to 100.");
   }
 

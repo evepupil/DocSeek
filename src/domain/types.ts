@@ -116,7 +116,7 @@ export interface StatusResult extends IndexChanges {
 
 export interface SearchRequest {
   readonly query: string;
-  readonly top: number;
+  readonly top?: number;
   readonly path?: string;
   readonly includeSnippet: boolean;
   readonly includeExplanation?: boolean;

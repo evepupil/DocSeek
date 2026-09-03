@@ -25,7 +25,7 @@ export async function executeSearch(options: ExecuteSearchOptions): Promise<Sear
     ...request,
     collectionIds: request.collectionIds ?? [collectionId],
   };
-  const candidateLimit = Math.min(500, Math.max(config.candidatePool, request.top * 10));
+  const candidateLimit = Math.min(500, Math.max(config.candidatePool, (request.top ?? 0) * 10));
   const queryTerms = tokenizeForSearch(request.query);
 
   const embeddingStartedAt = performance.now();
@@ -45,11 +45,11 @@ export async function executeSearch(options: ExecuteSearchOptions): Promise<Sear
 
   const fusionStartedAt = performance.now();
   const results = fuseCandidates(vectorCandidates, keywordCandidates, {
-    top: request.top,
     includeSnippet: request.includeSnippet,
     includeExplanation: request.includeExplanation ?? false,
     queryTerms,
     config,
+    ...(request.top !== undefined ? { top: request.top } : {}),
   });
   const fusionMs = elapsed(fusionStartedAt);
 

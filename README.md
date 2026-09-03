@@ -19,9 +19,18 @@ docseek search "worker lifecycle" --top 5 --path architecture/ --json
 docseek search "worker lifecycle" --explain
 ```
 
-The default search output contains only a score, Markdown path, line range, and heading hierarchy. Use `--json` for machine-readable results, `--snippet` for a short preview, or `--explain` for retrieval signals and timing diagnostics.
+The default output groups repeated paths and headings into a compact navigation tree:
 
-`--top` is a maximum. DocSeek can return fewer results, including none, when the available locations have weak semantic and lexical support.
+```text
+docs/
+└─ architecture/engine.md ×2 .775
+   ├─ Scheduler › GPU Cold-start Capacity L142-176 .920
+   └─ Worker › Startup L88-121 .630
+```
+
+Branches show `hit count + average score`; a single-result path is collapsed onto the line carrying its range and score. Use `--json` for machine-readable results, `--snippet` for a short preview, or `--explain` for retrieval signals and timing diagnostics.
+
+Without `--top`, DocSeek prints every trusted result found in the configured candidate pool. `--top` adds an optional maximum. Confidence filtering can still return fewer results, including none, when the available locations have weak semantic and lexical support.
 
 `init` creates `.docseek/config.toml` and `.docseek/index.db`, then adds `/.docseek/` to the project `.gitignore`. `update` only reindexes added and changed files and removes deleted files from the index.
 

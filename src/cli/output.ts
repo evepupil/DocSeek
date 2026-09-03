@@ -1,4 +1,5 @@
 import type { SearchDiagnostics, SearchResult, StatusResult } from "../domain/types.js";
+import { formatSearchTree } from "./search-tree.js";
 
 function formatTimings(diagnostics: SearchDiagnostics): string {
   const { timings } = diagnostics;
@@ -9,6 +10,11 @@ export function formatSearchText(
   results: readonly SearchResult[],
   diagnostics?: SearchDiagnostics,
 ): string {
+  const detailed =
+    diagnostics !== undefined || results.some((result) => result.snippet || result.explanation);
+  if (!detailed) {
+    return formatSearchTree(results);
+  }
   const body =
     results.length === 0
       ? "No matching documentation found."

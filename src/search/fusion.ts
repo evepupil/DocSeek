@@ -8,7 +8,7 @@ interface RankedCandidate {
 }
 
 export interface FusionOptions {
-  readonly top: number;
+  readonly top?: number;
   readonly includeSnippet: boolean;
   readonly includeExplanation: boolean;
   readonly queryTerms: readonly string[];
@@ -84,7 +84,7 @@ export function fuseCandidates(
       return left.candidate.startLine - right.candidate.startLine;
     });
 
-  return ranked.slice(0, options.top).map(({ candidate, signals }) => ({
+  return ranked.slice(0, options.top ?? ranked.length).map(({ candidate, signals }) => ({
     path: candidate.path,
     startLine: candidate.startLine,
     endLine: candidate.endLine,

@@ -105,4 +105,24 @@ describe("fuseCandidates", () => {
     expect(results[0]?.explanation?.lexicalStrength).toBeGreaterThan(0);
     expect(results[0]?.explanation?.confidence).toBeGreaterThan(0);
   });
+
+  it("returns every trusted candidate when no final limit is supplied", () => {
+    const vectorCandidates = Array.from({ length: 7 }, (_, index) =>
+      candidate(index + 1, `${index + 1}.md`, index + 1, "Relevant content", 0.1),
+    );
+
+    const unlimited = fuseCandidates(vectorCandidates, [], {
+      includeSnippet: false,
+      includeExplanation: false,
+      queryTerms: ["relevant"],
+      config: searchConfig,
+    });
+    const limited = fuseCandidates(vectorCandidates, [], {
+      ...options(),
+      top: 3,
+    });
+
+    expect(unlimited).toHaveLength(7);
+    expect(limited).toHaveLength(3);
+  });
 });

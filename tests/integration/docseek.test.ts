@@ -201,6 +201,29 @@ describe("DocSeek integration", () => {
     expect(explained.diagnostics.timings_ms["total"]).toBeTypeOf("number");
   });
 
+  it("uses the compact tree when search has no explicit output mode or limit", async () => {
+    const project = await createProject();
+    await initializeProject(project, createProvider);
+    let standardOutput = "";
+    let standardError = "";
+
+    const exitCode = await runCli(["search", "cold start"], {
+      cwd: () => project,
+      writeOut: (value) => {
+        standardOutput += value;
+      },
+      writeError: (value) => {
+        standardError += value;
+      },
+      createEmbeddingProvider: createProvider,
+    });
+
+    expect(exitCode).toBe(0);
+    expect(standardError).toBe("");
+    expect(standardOutput).toContain("engine.md › Architecture › Engine › Scheduler L5-7");
+    expect(standardOutput).not.toContain('"results"');
+  });
+
   it("returns no locations for an unsupported query", async () => {
     const project = await createProject();
     await initializeProject(project, createProvider);
