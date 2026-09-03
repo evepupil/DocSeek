@@ -51,7 +51,13 @@ DocSeek 在本地运行，无后台进程、数据库服务、容器和常驻守
 
 ## 快速开始
 
-当前版本为 `0.1.0`，npm 包尚未发布。现在可以从源码安装：
+通过 npm 全局安装：
+
+```bash
+npm install --global docseek
+```
+
+从源码参与开发：
 
 ```bash
 git clone https://github.com/evepupil/DocSeek.git
@@ -59,12 +65,6 @@ cd DocSeek
 npm install
 npm run build
 npm link
-```
-
-发布到 npm 后可直接安装：
-
-```bash
-npm install --global docseek
 ```
 
 进入需要检索的项目并建立索引：

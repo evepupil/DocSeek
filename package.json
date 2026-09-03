@@ -44,6 +44,17 @@
     "ai-agent"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evepupil/DocSeek.git"
+  },
+  "homepage": "https://github.com/evepupil/DocSeek#readme",
+  "bugs": {
+    "url": "https://github.com/evepupil/DocSeek/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "overrides": {
     "adm-zip": "0.6.0",
     "sharp": "0.35.4"
