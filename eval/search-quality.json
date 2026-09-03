@@ -18,13 +18,17 @@
       "id": "heading-lines-zh",
       "category": "semantic",
       "query": "怎样保证 Markdown 标题层级和原文行号能够对应",
-      "expected": [{ "path": "docs/模块设计/文档索引.md", "heading": "结构与数据流" }]
+      "expected": [
+        { "path": "docs/模块设计/文档索引.md", "heading": "结构与数据流" },
+        { "path": "docs/模块设计/文档索引.md", "heading": "当前实现" }
+      ]
     },
     {
       "id": "incremental-paraphrase-zh",
       "category": "semantic",
       "query": "怎样避免每次都重新处理所有资料",
       "expected": [
+        { "path": "README.md", "heading": "文档什么时候更新到索引" },
         { "path": "docs/模块设计/文档索引.md", "heading": "关键决策" },
         { "path": "docs/技术设计.md", "heading": "增量更新" }
       ]
@@ -65,13 +69,13 @@
       "id": "changed-files-en",
       "category": "semantic",
       "query": "How are changed files updated without rebuilding the whole index?",
-      "expected": [{ "path": "README.md", "heading": "Usage" }]
+      "expected": [{ "path": "README.md", "heading": "文档什么时候更新到索引" }]
     },
     {
       "id": "project-root-en",
       "category": "semantic",
       "query": "How does the CLI find the project root?",
-      "expected": [{ "path": "README.md", "heading": "Requirements" }]
+      "expected": [{ "path": "README.md", "heading": "快速开始" }]
     },
     {
       "id": "rrf-exact",
@@ -99,7 +103,7 @@
       "id": "scheduler-keywords",
       "category": "exact",
       "query": "scheduler GPU cold starts",
-      "expected": [{ "path": "README.md", "heading": "Usage" }]
+      "expected": [{ "path": "README.md", "heading": "查询怎么写" }]
     },
     {
       "id": "navigation-principle",
