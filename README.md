@@ -57,6 +57,19 @@ DocSeek 在本地运行，无后台进程、数据库服务、容器和常驻守
 npm install --global docseek
 ```
 
+全局安装会自动把精简使用规则写入当前用户的两个 Agent 指令文件：
+
+```text
+~/.codex/AGENTS.md
+~/.claude/CLAUDE.md
+```
+
+存在 DocSeek 闭合标签时只替换标签内的旧规则；没有标签时追加完整区块。用户原有规则保持不变。npm 禁用安装脚本或需要手工修复时执行：
+
+```bash
+docseek instructions --install
+```
+
 从源码参与开发：
 
 ```bash
@@ -198,18 +211,15 @@ docseek update
 
 ## 接入任意 Coding Agent
 
-DocSeek 只要求 Agent 能执行 shell 命令。可以把下面这段加入项目的 `AGENTS.md`、`CLAUDE.md` 或其他 Agent 规则文件：
+DocSeek 只要求 Agent 能执行 shell 命令。全局 npm 安装会自动维护 Codex 和 Claude 的用户级规则，新会话可以直接发现 DocSeek 的检索工作流。
 
-```md
-## 项目文档检索
+查看实际注入的规范提示词：
 
-- 当设计决策、业务规则或历史背景的位置未知时，先执行 `docseek search`。
-- 查询优先组合概念、缩写和同义表达，例如 `docseek search "容量判断" "冷启动" "SLA"`。
-- 根据返回的文件、标题和行号读取原始 Markdown，只读取当前任务需要的范围。
-- 文档发生变化后先执行 `docseek status`，存在待处理变化时执行 `docseek update`。
+```bash
+docseek instructions
 ```
 
-这个约定不绑定 Codex、Claude Code、Cursor、Cline 或其他 Agent，也不要求 MCP。
+提示词带有稳定的 DocSeek 开始和结束标签，升级版本会原位更新。标签外的内容不会被解析、输出或改写。其他 Agent 可以直接使用 `docseek instructions` 的输出，不要求 MCP。
 
 ## 工作原理
 

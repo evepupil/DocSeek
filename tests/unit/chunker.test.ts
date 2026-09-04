@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
+import type { DiscoveredDocument } from "../../src/domain/types.js";
+import {
+  INSTRUCTION_END_MARKER,
+  INSTRUCTION_START_MARKER,
+} from "../../src/instructions/content.js";
 import { chunkMarkdown } from "../../src/markdown/chunker.js";
+import { parseDocument } from "../../src/markdown/parser.js";
 
 describe("chunkMarkdown", () => {
   it("keeps heading hierarchy and source line ranges", () => {
@@ -73,5 +79,42 @@ describe("chunkMarkdown", () => {
     expect(chunks).toHaveLength(5);
     expect(indexedCharacters).toBe(500);
     expect(chunks.every((chunk) => chunk.endLine === 3)).toBe(true);
+  });
+
+  it("excludes managed instructions while preserving later source lines", () => {
+    const content = [
+      "# Agent rules",
+      "",
+      INSTRUCTION_START_MARKER,
+      "## Documentation lookup with DocSeek",
+      "",
+      "Search instructions must not be indexed.",
+      INSTRUCTION_END_MARKER,
+      "",
+      "## Project decision",
+      "",
+      "Keep this project fact searchable.",
+    ].join("\n");
+    const document: DiscoveredDocument = {
+      sourceId: "project",
+      documentKey: "project:AGENTS.md",
+      locator: "AGENTS.md",
+      displayPath: "AGENTS.md",
+      absolutePath: "C:/project/AGENTS.md",
+      mediaType: "text/markdown",
+      content,
+      contentHash: "hash",
+      modifiedAtMs: 0,
+      sizeBytes: content.length,
+      tags: [],
+    };
+
+    const chunks = parseDocument(document, 1_000);
+    const projectChunk = chunks.find((chunk) => chunk.heading.includes("Project decision"));
+
+    expect(chunks.map((chunk) => chunk.content).join("\n")).not.toContain(
+      "Search instructions must not be indexed.",
+    );
+    expect(projectChunk).toMatchObject({ startLine: 9, endLine: 11 });
   });
 });

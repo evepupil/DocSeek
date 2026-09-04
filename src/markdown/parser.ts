@@ -1,10 +1,11 @@
 import type { DocumentParser } from "../domain/contracts.js";
 import type { DiscoveredDocument, DocumentMediaType, IndexableChunk } from "../domain/types.js";
+import { maskInstructionBlock } from "../instructions/managed-block.js";
 import { chunkMarkdown } from "./chunker.js";
 
 class MarkdownDocumentParser implements DocumentParser {
   parse(document: DiscoveredDocument, maxChars: number): readonly IndexableChunk[] {
-    return chunkMarkdown(document.content, maxChars);
+    return chunkMarkdown(maskInstructionBlock(document.content), maxChars);
   }
 }
 

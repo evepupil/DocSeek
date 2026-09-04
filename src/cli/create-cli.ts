@@ -7,6 +7,11 @@ import { updateProject } from "../application/update-project.js";
 import { getStatus } from "../application/get-status.js";
 import { searchDocsDetailed } from "../application/search-docs.js";
 import { createEmbeddingProvider } from "../embedding/factory.js";
+import { DOCSEEK_VERSION } from "../version.js";
+import {
+  registerInstructionsCommand,
+  type GlobalInstructionInstaller,
+} from "./instructions-command.js";
 import { formatSearchJson, formatSearchText, formatStatusText } from "./output.js";
 
 export interface CliDependencies {
@@ -14,6 +19,7 @@ export interface CliDependencies {
   readonly writeOut: (value: string) => void;
   readonly writeError: (value: string) => void;
   readonly createEmbeddingProvider: EmbeddingProviderFactory;
+  readonly installGlobalInstructions?: GlobalInstructionInstaller;
 }
 
 const defaultDependencies: CliDependencies = {
@@ -36,7 +42,7 @@ export function createCli(dependencies: CliDependencies = defaultDependencies): 
   program
     .name("docseek")
     .description("Locate project documentation with local semantic search")
-    .version("0.1.0")
+    .version(DOCSEEK_VERSION)
     .showHelpAfterError()
     .exitOverride()
     .configureOutput({
@@ -123,6 +129,13 @@ export function createCli(dependencies: CliDependencies = defaultDependencies): 
         );
       },
     );
+
+  registerInstructionsCommand(program, {
+    writeOut: dependencies.writeOut,
+    ...(dependencies.installGlobalInstructions
+      ? { installGlobalInstructions: dependencies.installGlobalInstructions }
+      : {}),
+  });
 
   return program;
 }

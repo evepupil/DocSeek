@@ -13,6 +13,10 @@ import { searchDocs } from "../../src/application/search-docs.js";
 import { runCli } from "../../src/cli/create-cli.js";
 import { writeConfig } from "../../src/config/config-file.js";
 import { createDefaultConfig } from "../../src/config/schema.js";
+import {
+  INSTRUCTION_END_MARKER,
+  INSTRUCTION_START_MARKER,
+} from "../../src/instructions/content.js";
 
 class DeterministicEmbeddingProvider implements EmbeddingProvider {
   readonly fingerprint = "test-embedding-v1";
@@ -222,6 +226,48 @@ describe("DocSeek integration", () => {
     expect(standardError).toBe("");
     expect(standardOutput).toContain("engine.md › Architecture › Engine › Scheduler L5-7");
     expect(standardOutput).not.toContain('"results"');
+  });
+
+  it("prints and manually installs global agent instructions", async () => {
+    const project = await createProject();
+    let standardOutput = "";
+    let installCalls = 0;
+    const dependencies = {
+      cwd: () => project,
+      writeOut: (value: string) => {
+        standardOutput += value;
+      },
+      writeError: () => {},
+      createEmbeddingProvider: createProvider,
+      installGlobalInstructions: () => {
+        installCalls += 1;
+        return Promise.resolve([
+          {
+            id: "codex" as const,
+            label: "Codex",
+            filePath: "C:/user/.codex/AGENTS.md",
+            status: "updated" as const,
+          },
+          {
+            id: "claude" as const,
+            label: "Claude",
+            filePath: "C:/user/.claude/CLAUDE.md",
+            status: "created" as const,
+          },
+        ]);
+      },
+    };
+
+    expect(await runCli(["instructions"], dependencies)).toBe(0);
+    expect(installCalls).toBe(0);
+    expect(standardOutput).toContain(INSTRUCTION_START_MARKER);
+    expect(standardOutput).toContain(INSTRUCTION_END_MARKER);
+
+    standardOutput = "";
+    expect(await runCli(["instructions", "--install"], dependencies)).toBe(0);
+    expect(installCalls).toBe(1);
+    expect(standardOutput).toContain("Codex: updated C:/user/.codex/AGENTS.md");
+    expect(standardOutput).toContain("Claude: created C:/user/.claude/CLAUDE.md");
   });
 
   it("returns no locations for an unsupported query", async () => {

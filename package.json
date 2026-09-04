@@ -1,6 +1,6 @@
 {
   "name": "docseek",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Local semantic documentation locator for coding agents",
   "type": "module",
   "bin": {
@@ -13,11 +13,14 @@
     "dist/domain",
     "dist/embedding",
     "dist/index.*",
+    "dist/instructions",
     "dist/markdown",
     "dist/project",
     "dist/search",
     "dist/sources",
     "dist/storage",
+    "dist/version.*",
+    "scripts/postinstall.mjs",
     "README.md",
     "LICENSE"
   ],
@@ -34,7 +37,8 @@
     "test:watch": "vitest",
     "eval:quality": "npm run build && node scripts/evaluate-search.mjs",
     "gate": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm pack --dry-run",
-    "prepublishOnly": "npm run gate"
+    "prepublishOnly": "npm run gate",
+    "postinstall": "node scripts/postinstall.mjs"
   },
   "keywords": [
     "semantic-search",
