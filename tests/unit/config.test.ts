@@ -43,6 +43,8 @@ describe("search configuration", () => {
       minimumConfidence: 0.5,
       candidatePool: 100,
     });
+    expect(config.embedding.maxTokens).toBe(288);
+    expect(toRawConfig(config).embedding.max_tokens).toBe(288);
     expect(toRawConfig(config).search).toEqual(parsed.search);
   });
 

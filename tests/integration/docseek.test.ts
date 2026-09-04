@@ -138,6 +138,25 @@ describe("DocSeek integration", () => {
     expect(settled).toMatchObject({ added: 0, modified: 0, deleted: 0, unchanged: 2 });
   });
 
+  it("embeds all changed documents in one cross-document call", async () => {
+    const project = await createProject();
+    const documentBatches: string[][] = [];
+    const recordingFactory: EmbeddingProviderFactory = () => ({
+      fingerprint: "recording-embedding-v1",
+      embedDocuments: (texts) => {
+        documentBatches.push([...texts]);
+        return Promise.resolve(texts.map(vectorFor));
+      },
+      embedQuery: (text) => Promise.resolve(vectorFor(text)),
+      dispose: () => Promise.resolve(),
+    });
+
+    await initializeProject(project, recordingFactory);
+
+    expect(documentBatches).toHaveLength(1);
+    expect(documentBatches[0]).toHaveLength(2);
+  });
+
   it("provides stable machine-readable CLI output", async () => {
     const project = await createProject();
     await initializeProject(project, createProvider);

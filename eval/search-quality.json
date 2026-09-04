@@ -12,13 +12,17 @@
       "id": "external-source-zh",
       "category": "semantic",
       "query": "以后要把项目外部的资料目录接进来，应该扩展哪一层",
-      "expected": [{ "path": "docs/架构设计.md", "heading": "外部文档" }]
+      "expected": [
+        { "path": "docs/架构设计.md", "heading": "外部文档" },
+        { "path": "README.md", "heading": "可扩展方向" }
+      ]
     },
     {
       "id": "heading-lines-zh",
       "category": "semantic",
       "query": "怎样保证 Markdown 标题层级和原文行号能够对应",
       "expected": [
+        { "path": "docs/模块设计/文档索引.md", "heading": "文档索引模块" },
         { "path": "docs/模块设计/文档索引.md", "heading": "结构与数据流" },
         { "path": "docs/模块设计/文档索引.md", "heading": "当前实现" }
       ]
@@ -56,14 +60,21 @@
       "id": "cross-project-memory-zh",
       "category": "semantic",
       "query": "以后整合多个项目的记忆应该从哪里扩展",
-      "expected": [{ "path": "docs/架构设计.md", "heading": "跨项目与记忆" }]
+      "expected": [
+        { "path": "docs/架构设计.md", "heading": "跨项目与记忆" },
+        { "path": "README.md", "heading": "可扩展方向" }
+      ]
     },
     {
       "id": "tag-filter-path",
       "category": "filter",
       "query": "标签",
       "path": "模块设计/",
-      "expected": [{ "path": "docs/模块设计/项目与配置.md", "heading": "待扩展项" }]
+      "expected": [
+        { "path": "docs/模块设计/项目与配置.md", "heading": "待扩展项" },
+        { "path": "docs/模块设计/文档索引.md", "heading": "待扩展项" },
+        { "path": "docs/模块设计/混合检索.md", "heading": "结构与数据流" }
+      ]
     },
     {
       "id": "changed-files-en",
@@ -96,7 +107,8 @@
       "expected": [
         { "path": "docs/技术设计.md", "heading": "技术基线" },
         { "path": "docs/模块设计/向量与存储.md", "heading": "关键决策" },
-        { "path": "docs/模块设计/向量与存储.md", "heading": "当前实现" }
+        { "path": "docs/模块设计/向量与存储.md", "heading": "当前实现" },
+        { "path": "docs/模块设计/向量与存储.md", "heading": "验证方式" }
       ]
     },
     {

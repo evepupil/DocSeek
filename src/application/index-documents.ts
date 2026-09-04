@@ -1,16 +1,9 @@
 import type { EmbeddingProviderFactory } from "../domain/contracts.js";
 import { DocSeekError } from "../domain/errors.js";
-import type {
-  DiscoveredDocument,
-  DocSeekConfig,
-  EmbeddedChunk,
-  IndexSummary,
-} from "../domain/types.js";
-import { embeddingText } from "../markdown/chunker.js";
-import { parseDocument } from "../markdown/parser.js";
-import { buildFtsText } from "../search/terms.js";
+import type { DiscoveredDocument, DocSeekConfig, IndexSummary } from "../domain/types.js";
 import type { IndexStore } from "../storage/index-store.js";
 import { calculateChanges } from "./change-set.js";
+import { attachEmbeddings, prepareIndexBatch } from "./index-batch.js";
 
 interface IndexDocumentsOptions {
   readonly config: DocSeekConfig;
@@ -35,32 +28,13 @@ export async function indexDocuments(options: IndexDocumentsOptions): Promise<In
     store.syncCollection(config, rootDir);
 
     const changes = calculateChanges(documents, store.documentSnapshots(config.projectId));
-    for (const document of changes.changedDocuments) {
-      const chunks = parseDocument(document, config.chunking.maxChars);
-      const embeddings = await provider.embedDocuments(chunks.map(embeddingText));
-      if (embeddings.length !== chunks.length) {
-        throw new DocSeekError(
-          "EMBEDDING_COUNT_MISMATCH",
-          `Expected ${chunks.length} vectors for ${document.displayPath}, received ${embeddings.length}.`,
-        );
-      }
-
-      const embeddedChunks: EmbeddedChunk[] = chunks.map((chunk, index) => {
-        const embedding = embeddings[index];
-        if (!embedding) {
-          throw new DocSeekError(
-            "EMBEDDING_MISSING",
-            `Missing vector ${index + 1} for ${document.displayPath}.`,
-          );
-        }
-        return {
-          ...chunk,
-          embedding,
-          headingTerms: buildFtsText(chunk.heading.join(" ")),
-          searchTerms: buildFtsText(chunk.content),
-        };
-      });
-      store.replaceDocument(config.projectId, document, embeddedChunks);
+    const batch = prepareIndexBatch(changes.changedDocuments, config.chunking.maxChars);
+    const embeddings =
+      batch.embeddingTexts.length > 0
+        ? await provider.embedDocuments(batch.embeddingTexts)
+        : ([] satisfies readonly Float32Array[]);
+    for (const entry of attachEmbeddings(batch, embeddings)) {
+      store.replaceDocument(config.projectId, entry.document, entry.chunks);
     }
 
     for (const document of changes.deletedDocuments) {

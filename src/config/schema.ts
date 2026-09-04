@@ -48,6 +48,7 @@ export const rawConfigSchema = z
       query_prefix: z.string(),
       document_prefix: z.string(),
       batch_size: z.int().min(1).max(128),
+      max_tokens: z.int().min(32).max(8192).default(288),
     }),
     chunking: z.strictObject({
       max_chars: z.int().min(256).max(32_000),
@@ -96,6 +97,7 @@ export function fromRawConfig(raw: RawConfig): DocSeekConfig {
       queryPrefix: raw.embedding.query_prefix,
       documentPrefix: raw.embedding.document_prefix,
       batchSize: raw.embedding.batch_size,
+      maxTokens: raw.embedding.max_tokens,
     },
     chunking: { maxChars: raw.chunking.max_chars },
     search: {
@@ -128,6 +130,7 @@ export function toRawConfig(config: DocSeekConfig): RawConfig {
       query_prefix: config.embedding.queryPrefix,
       document_prefix: config.embedding.documentPrefix,
       batch_size: config.embedding.batchSize,
+      max_tokens: config.embedding.maxTokens,
     },
     chunking: { max_chars: config.chunking.maxChars },
     search: {
@@ -160,6 +163,7 @@ export function createDefaultConfig(): DocSeekConfig {
       query_prefix: "query: ",
       document_prefix: "passage: ",
       batch_size: 8,
+      max_tokens: 288,
     },
     chunking: { max_chars: 1800 },
     search: defaultSearchConfig,

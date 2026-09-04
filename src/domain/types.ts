@@ -11,6 +11,7 @@ export interface EmbeddingConfig {
   readonly queryPrefix: string;
   readonly documentPrefix: string;
   readonly batchSize: number;
+  readonly maxTokens: number;
 }
 
 export interface ChunkingConfig {
