@@ -32,16 +32,18 @@ Codex 路径依据 [OpenAI Docs 的全局 AGENTS.md 说明](https://learn.chatgp
 
 ## Documentation lookup with DocSeek
 
+- Before the first search in a project, run `docseek status`; run `docseek init` first when uninitialized, or `docseek update` when changes are pending.
 - When project documentation location or wording is unknown, run `docseek search "<concept>" "<synonym>"`.
 - Prefer short concepts, aliases, abbreviations, and domain terms. Multiple arguments form one query.
 - Treat results as navigation and read the returned Markdown ranges before drawing conclusions.
-- In a fresh checkout, run `docseek status`; use `docseek init` when missing and `docseek update` when documents changed.
 - Keep compact output by default. Add `--path` or `--top` to narrow; use `--json`, `--snippet`, or `--explain` only when needed.
 
 <!-- DOCSEEK:INSTRUCTIONS:END -->
 ```
 
 提示词只描述使用时机和可靠工作流，不介绍产品、不重复完整帮助、不注入当前用户或项目路径。
+
+初始化检查必须排在搜索说明之前。Agent 在每个项目首次搜索前先运行 `status`；未初始化时先执行 `init`，存在待处理变化时先执行 `update`。
 
 ## 写入规则
 

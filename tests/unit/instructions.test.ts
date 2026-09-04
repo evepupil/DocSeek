@@ -69,6 +69,15 @@ describe("managed DocSeek instructions", () => {
     expect(mergeInstructionBlock(replaced.content).action).toBe("unchanged");
   });
 
+  it("puts index initialization before the search instruction", () => {
+    const block = renderInstructionBlock();
+    const initialization = block.indexOf("run `docseek init` first when uninitialized");
+    const search = block.indexOf('run `docseek search "<concept>" "<synonym>"`');
+
+    expect(initialization).toBeGreaterThan(0);
+    expect(search).toBeGreaterThan(initialization);
+  });
+
   it.each([
     INSTRUCTION_START_MARKER,
     INSTRUCTION_END_MARKER,
