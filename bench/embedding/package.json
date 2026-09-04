@@ -1,0 +1,40 @@
+{
+  "name": "docseek-embedding-benchmark",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "gate": "npm run typecheck && npm test && npm run build",
+    "benchmark": "npm run build && node dist/src/cli.js"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0",
+    "better-sqlite3": "13.0.3",
+    "fastembed": "2.1.0",
+    "node-llama-cpp": "3.20.0",
+    "onnxruntime-node": "1.24.3",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "9.6.0",
+    "@types/node": "22.20.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.11"
+  },
+  "overrides": {
+    "adm-zip": "0.6.0",
+    "sharp": "0.35.4",
+    "tar": "7.5.22"
+  },
+  "allowScripts": {
+    "better-sqlite3@13.0.3": true,
+    "node-llama-cpp@3.20.0": true,
+    "onnxruntime-node@1.21.0": true,
+    "onnxruntime-node@1.24.3": true,
+    "protobufjs@7.6.6": true,
+    "sharp@0.35.4": true
+  }
+}

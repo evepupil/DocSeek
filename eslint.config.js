@@ -4,10 +4,12 @@ import tseslint from "typescript-eslint";
 export default tseslint.config(
   {
     ignores: [
-      "dist/**",
-      "coverage/**",
+      "**/dist/**",
+      "**/coverage/**",
+      "**/node_modules/**",
       ".docseek/**",
       ".codegraph/**",
+      "bench/embedding/cache/**",
       "eslint.config.js",
       "scripts/**",
     ],

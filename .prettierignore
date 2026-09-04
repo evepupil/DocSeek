@@ -1,5 +1,8 @@
-dist
-coverage
+**/dist
+**/coverage
+**/node_modules
+**/cache
 .docseek
 .codegraph
 package-lock.json
+bench/embedding/results/*.json

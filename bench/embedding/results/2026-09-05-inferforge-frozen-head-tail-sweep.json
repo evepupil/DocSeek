@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "status": "mixed single-run and repeated measurements",
+  "created_at": "2026-09-05",
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "node": "v24.18.0",
+    "cpu": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "logical_processors": 16,
+    "total_memory_gib": 29.9,
+    "nvidia_runtime": false
+  },
+  "corpus": {
+    "source_revision": "260ee675370b22de233ab5a224dfd1a4d92bd17c",
+    "markdown_documents": 136,
+    "markdown_bytes": 1630013,
+    "chunks": 1677,
+    "fingerprint": "514dfbf5c4fae56fa6e44b7d583c2a9a27d505b936d568c8eb9884ccb04ad0e7"
+  },
+  "configuration": {
+    "tool": "@huggingface/transformers core",
+    "tool_version": "4.2.0",
+    "runtime": "onnxruntime-node",
+    "runtime_version": "1.24.3",
+    "model": "Xenova/multilingual-e5-small",
+    "dtype": "q8",
+    "dimension": 384,
+    "input_strategy": "length-bucketed-head-tail",
+    "quality_cases": 18,
+    "quality_top": 5
+  },
+  "historical_baseline": {
+    "documents": 126,
+    "chunks": 1598,
+    "init_ms_range": [240000, 249000],
+    "note": "Historical live runs used per-document batching and 512-token head truncation."
+  },
+  "runs": [
+    {
+      "max_tokens": 512,
+      "batch_size": 8,
+      "init_ms": 172019,
+      "recall_at_5": 0.8888888888888888,
+      "top_1": 0.3888888888888889,
+      "mean_reciprocal_rank": 0.5805555555555556,
+      "stability": 1
+    },
+    {
+      "max_tokens": 320,
+      "batch_size": 8,
+      "init_ms": 127290,
+      "recall_at_5": 0.8888888888888888,
+      "top_1": 0.3888888888888889,
+      "mean_reciprocal_rank": 0.5824074074074074,
+      "stability": 1
+    },
+    {
+      "max_tokens": 288,
+      "batch_size": 8,
+      "init_ms": 123664,
+      "init_ms_runs": [123664, 164609, 186420, 113325],
+      "init_ms_median": 144137,
+      "init_ms_minimum": 113325,
+      "init_ms_maximum": 186420,
+      "recall_at_5": 0.8888888888888888,
+      "top_1": 0.3888888888888889,
+      "mean_reciprocal_rank": 0.5731481481481482,
+      "stability": 1,
+      "selected": true
+    },
+    {
+      "max_tokens": 280,
+      "batch_size": 8,
+      "init_ms": 121514,
+      "recall_at_5": 0.8333333333333334,
+      "top_1": 0.3333333333333333,
+      "mean_reciprocal_rank": 0.548148148148148,
+      "stability": 1
+    },
+    {
+      "max_tokens": 272,
+      "batch_size": 8,
+      "init_ms": 112894,
+      "recall_at_5": 0.8333333333333334,
+      "top_1": 0.2777777777777778,
+      "mean_reciprocal_rank": 0.4972222222222222,
+      "stability": 1
+    },
+    {
+      "max_tokens": 256,
+      "batch_size": 8,
+      "init_ms": 104807,
+      "recall_at_5": 0.8333333333333334,
+      "top_1": 0.2777777777777778,
+      "mean_reciprocal_rank": 0.5018518518518519,
+      "stability": 1
+    },
+    {
+      "max_tokens": 288,
+      "batch_size": 4,
+      "init_ms": 124391,
+      "recall_at_5": 0.8333333333333334,
+      "top_1": 0.3888888888888889,
+      "mean_reciprocal_rank": 0.5527777777777777,
+      "stability": 1
+    },
+    {
+      "max_tokens": 288,
+      "batch_size": 8,
+      "batching": "exact-token-length",
+      "init_ms": 119557,
+      "recall_at_5": 0.8333333333333334,
+      "top_1": 0.3888888888888889,
+      "mean_reciprocal_rank": 0.5453703703703704,
+      "stability": 1,
+      "rejected": "Recall@5 regressed relative to the 512-token control."
+    }
+  ],
+  "selection": {
+    "max_tokens": 288,
+    "batch_size": 8,
+    "reason": "Shortest input and batch setting that retained the 512-token Recall@5 and Top-1 results.",
+    "remaining_work": [
+      "Reduce median full-init time below 120 seconds on the reference machine.",
+      "Measure and reduce the observed 123.7 to 186.4 second run-to-run variance.",
+      "Run Windows, Linux, and macOS installation checks."
+    ]
+  }
+}
