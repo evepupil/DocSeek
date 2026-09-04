@@ -3,7 +3,7 @@
 - **模块定位**：在 DocSeek 全局安装时，把精简使用规则安全写入 Codex 与 Claude 的用户级全局指令文件。
 - **对应代码**：`src/instructions/`、`scripts/postinstall.mjs`、`src/cli/create-cli.ts`、`src/markdown/`。
 - **所属 M 里程碑**：[M6 Agent 使用入口](../roadmap.md#m6-agent使用入口)。
-- **当前状态**：实现完成，待发布验证。
+- **当前状态**：已完成。
 - **最近更新时间**：2026-09-04。
 
 ## 职责与边界
@@ -92,9 +92,11 @@ docseek instructions --install
 
 ## 当前实现
 
-`0.2.0` 发布候选已经实现规范提示词、标签合并、全局目标解析、安全文件写入、生命周期包装脚本、手工修复命令和 Markdown 等行屏蔽。CLI 版本与 npm 包版本由同一受测常量约束，发布清单显式包含顶层版本模块、`dist/instructions` 和 `scripts/postinstall.mjs`。
+`0.2.0` 已经实现规范提示词、标签合并、全局目标解析、安全文件写入、生命周期包装脚本、手工修复命令和 Markdown 等行屏蔽。CLI 版本与 npm 包版本由同一受测常量约束，发布清单显式包含顶层版本模块、`dist/instructions` 和 `scripts/postinstall.mjs`。
 
 隔离 npm 全局安装实测完成以下闭环：本地安装标志不创建文件；全局安装自动创建 Codex 与 Claude 两个目标；安装后的命令返回 `0.2.0`；重复执行生命周期脚本时两个目标均返回 `unchanged`，每个文件只有一对 DocSeek 标签。
+
+`docseek@0.2.0` 已发布到 npm。使用公网包覆盖安装后，真实 Codex 与 Claude 规则文件哈希保持不变，手工修复命令对两个目标均返回 `unchanged`，随后真实语义搜索成功。提示词第一条明确要求首次搜索前运行 `status`，未初始化时先执行 `init`。
 
 ## 验证方式
 
@@ -121,3 +123,4 @@ docseek instructions --install
 
 - 2026-09-04：确认全局安装自动注入 Codex 与 Claude，闭合标签内替换，无标签时追加整段。
 - 2026-09-04：完成全局目标安全写入、`instructions` 命令、npm 生命周期入口、索引屏蔽和隔离包安装验证。
+- 2026-09-04：`docseek@0.2.0` 发布；公网全局安装、真实双目标幂等注入和语义搜索验证通过，实现提交为 `a64ed1f`。
