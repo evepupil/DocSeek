@@ -42,7 +42,9 @@ export function validateProviderOptions(options: {
   readonly queryPrefix: string;
 }): void {
   if (options.poolingSpecified && !supportsConfigurablePooling(options.id)) {
-    throw new Error("--pooling is only supported by transformers-core and direct-ort.");
+    throw new Error(
+      "--pooling is only supported by transformers, transformers-core, and direct-ort.",
+    );
   }
   if (
     options.id === "static-ort" &&
