@@ -1,21 +1,20 @@
 import { spawn } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
-import os from "node:os";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
+import {
+  benchmarkDtype,
+  benchmarkPooling,
+  modelUsesPlainText,
+  supportsConfigurablePooling,
+  validateProviderOptions,
+} from "./provider-options.js";
 import { summarizeNumbers } from "./stats.js";
-import type {
-  BatchingStrategy,
-  BenchmarkDtype,
-  ProviderId,
-  WorkerConfig,
-  WorkerResult,
-} from "./types.js";
+import type { BatchingStrategy, ProviderId, WorkerConfig, WorkerResult } from "./types.js";
 
 const resultMarker = "DOCSEEK_EMBEDDING_BENCH_RESULT ";
 const packageRoot = path.resolve(import.meta.dirname, "../..");
-const repositoryRoot = path.resolve(packageRoot, "../..");
 const invocationDirectory = path.resolve(process.env["INIT_CWD"] ?? process.cwd());
 
 function resolveUserPath(value: string): string {
@@ -29,7 +28,7 @@ Usage:
   npm --prefix bench/embedding run benchmark -- --provider <name> [options]
 
 Options:
-  --provider <name>          transformers | transformers-core | direct-ort | fastembed | llama-cpp
+  --provider <name>          transformers | transformers-core | direct-ort | static-ort | fastembed | llama-cpp
   --batch-size <n>           Repeat to compare several sizes (default: 8, 16, 32)
   --batching <name>          sequential | length-bucketed (default: sequential)
   --intra-op-threads <n>     ONNX work inside one operation (default: runtime choice)
@@ -37,16 +36,17 @@ Options:
   --runs <n>                 Fresh child processes per batch size (default: 3)
   --query-runs <n>           Repeated query embeddings per quality case (default: 2)
   --limit <n>                Evenly sample the corpus for a quick run
-  --index <path>             Source DocSeek index
+  --index <path>             Source DocSeek index (required)
   --cases <path>             Semantic quality cases
   --model <name>             Model id; FastEmbed also accepts custom or bge-small-zh
-  --model-path <path>        ONNX model directory/file or llama.cpp GGUF file
+  --model-path <path>        Model directory, ONNX file, or llama.cpp GGUF (provider-specific)
   --model-cache <path>       Transformers.js model cache
   --work-cache <path>        Ignored benchmark cache
-  --dtype <name>             Model precision label (default: q8)
+  --dtype <name>             Model precision label (static-ort: int8; otherwise q8)
   --max-length <n>           Maximum input tokens (default: 512)
   --document-prefix <text>   Document prefix (default: passage: )
   --query-prefix <text>      Query prefix (default: query: )
+  --pooling <name>           mean | cls (known BGE/Granite models default to cls)
   --output <path>            Raw JSON result path
   --help                     Show this message
 `;
@@ -68,17 +68,21 @@ function providerId(value: string | undefined): ProviderId {
     value !== "transformers" &&
     value !== "transformers-core" &&
     value !== "direct-ort" &&
+    value !== "static-ort" &&
     value !== "fastembed" &&
     value !== "llama-cpp"
   ) {
     throw new Error(
-      "--provider must be transformers, transformers-core, direct-ort, fastembed, or llama-cpp.",
+      "--provider must be transformers, transformers-core, direct-ort, static-ort, fastembed, or llama-cpp.",
     );
   }
   return value;
 }
 
 function defaultModel(id: ProviderId): string {
+  if (id === "static-ort") {
+    return "sentence-transformers/static-similarity-mrl-multilingual-v1";
+  }
   if (id === "fastembed") {
     return "custom";
   }
@@ -89,26 +93,11 @@ function defaultModel(id: ProviderId): string {
 }
 
 function defaultDocumentPrefix(id: ProviderId, model: string): string {
-  return id === "llama-cpp" || model === "bge-small-zh" ? "" : "passage: ";
+  return id === "llama-cpp" || id === "static-ort" || modelUsesPlainText(model) ? "" : "passage: ";
 }
 
 function defaultQueryPrefix(id: ProviderId, model: string): string {
-  return id === "llama-cpp" || model === "bge-small-zh" ? "" : "query: ";
-}
-
-function dtype(value: string | undefined): BenchmarkDtype {
-  const selected = value ?? "q8";
-  if (
-    selected !== "fp32" &&
-    selected !== "fp16" &&
-    selected !== "q8" &&
-    selected !== "int8" &&
-    selected !== "uint8" &&
-    selected !== "q4"
-  ) {
-    throw new Error("--dtype must be fp32, fp16, q8, int8, uint8, or q4.");
-  }
-  return selected;
+  return id === "llama-cpp" || id === "static-ort" || modelUsesPlainText(model) ? "" : "query: ";
 }
 
 function batchingStrategy(value: string | undefined): BatchingStrategy {
@@ -120,19 +109,20 @@ function batchingStrategy(value: string | undefined): BatchingStrategy {
 }
 
 function defaultModelCache(): string {
-  if (process.platform === "win32" && process.env["LOCALAPPDATA"]) {
-    return path.join(process.env["LOCALAPPDATA"], "DocSeek", "models");
-  }
-  return path.join(
-    process.env["XDG_CACHE_HOME"] ?? path.join(os.homedir(), ".cache"),
-    "docseek",
-    "models",
-  );
+  return path.join(packageRoot, "cache", "models");
 }
 
 function defaultOutput(provider: ProviderId): string {
   const timestamp = new Date().toISOString().replaceAll(":", "-");
   return path.join(packageRoot, "results", `${timestamp}-${provider}.json`);
+}
+
+function reportPath(value: string): string {
+  const relative = path.relative(invocationDirectory, value);
+  if (relative.length > 0 && !relative.startsWith("..") && !path.isAbsolute(relative)) {
+    return relative.replaceAll(path.sep, "/");
+  }
+  return value;
 }
 
 async function runWorker(config: WorkerConfig): Promise<WorkerResult> {
@@ -216,6 +206,7 @@ async function main(): Promise<void> {
       "max-length": { type: "string" },
       "document-prefix": { type: "string" },
       "query-prefix": { type: "string" },
+      pooling: { type: "string" },
       output: { type: "string" },
       help: { type: "boolean", short: "h" },
     },
@@ -227,6 +218,9 @@ async function main(): Promise<void> {
     return;
   }
   const id = providerId(values.provider);
+  if (!values.index) {
+    throw new Error("--index is required so benchmark runs cannot silently use a stale corpus.");
+  }
   const batchSizes = (values["batch-size"] ?? ["8", "16", "32"]).map((value) =>
     positiveInteger("--batch-size", value),
   );
@@ -235,6 +229,14 @@ async function main(): Promise<void> {
   const limit = values.limit ? positiveInteger("--limit", values.limit) : undefined;
   const outputPath = values.output ? resolveUserPath(values.output) : defaultOutput(id);
   const model = values.model ?? defaultModel(id);
+  const documentPrefix = values["document-prefix"] ?? defaultDocumentPrefix(id, model);
+  const queryPrefix = values["query-prefix"] ?? defaultQueryPrefix(id, model);
+  validateProviderOptions({
+    id,
+    poolingSpecified: values.pooling !== undefined,
+    documentPrefix,
+    queryPrefix,
+  });
   const baseConfig = {
     id,
     model,
@@ -245,10 +247,11 @@ async function main(): Promise<void> {
     workCacheDir: values["work-cache"]
       ? resolveUserPath(values["work-cache"])
       : path.join(packageRoot, "cache"),
-    dtype: dtype(values.dtype),
+    dtype: benchmarkDtype(id, values.dtype),
     maxLength: positiveInteger("--max-length", values["max-length"], 512),
-    documentPrefix: values["document-prefix"] ?? defaultDocumentPrefix(id, model),
-    queryPrefix: values["query-prefix"] ?? defaultQueryPrefix(id, model),
+    documentPrefix,
+    queryPrefix,
+    pooling: benchmarkPooling(model, values.pooling),
     batchingStrategy: batchingStrategy(values.batching),
     ...(values["intra-op-threads"]
       ? { intraOpThreads: positiveInteger("--intra-op-threads", values["intra-op-threads"]) }
@@ -256,9 +259,7 @@ async function main(): Promise<void> {
     ...(values["inter-op-threads"]
       ? { interOpThreads: positiveInteger("--inter-op-threads", values["inter-op-threads"]) }
       : {}),
-    indexPath: values.index
-      ? resolveUserPath(values.index)
-      : path.join(repositoryRoot, ".docseek", "evaluations", "inferforge", ".docseek", "index.db"),
+    indexPath: resolveUserPath(values.index),
     casesPath: values.cases
       ? resolveUserPath(values.cases)
       : path.join(packageRoot, "cases", "inferforge.json"),
@@ -279,10 +280,18 @@ async function main(): Promise<void> {
     command: {
       provider: baseConfig.id,
       model: baseConfig.model,
+      ...(baseConfig.modelPath ? { modelPath: reportPath(baseConfig.modelPath) } : {}),
+      modelCache: reportPath(baseConfig.modelCacheDir),
+      workCache: reportPath(baseConfig.workCacheDir),
+      index: reportPath(baseConfig.indexPath),
+      cases: reportPath(baseConfig.casesPath),
       dtype: baseConfig.dtype,
       maxLength: baseConfig.maxLength,
       documentPrefix: baseConfig.documentPrefix,
       queryPrefix: baseConfig.queryPrefix,
+      ...(supportsConfigurablePooling(baseConfig.id) || baseConfig.id === "static-ort"
+        ? { pooling: baseConfig.pooling }
+        : {}),
       batchingStrategy: baseConfig.batchingStrategy,
       ...(baseConfig.intraOpThreads !== undefined
         ? { intraOpThreads: baseConfig.intraOpThreads }

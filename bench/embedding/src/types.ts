@@ -1,7 +1,8 @@
 export type ProviderId =
-  "transformers" | "transformers-core" | "direct-ort" | "fastembed" | "llama-cpp";
+  "transformers" | "transformers-core" | "direct-ort" | "static-ort" | "fastembed" | "llama-cpp";
 export type BenchmarkDtype = "fp32" | "fp16" | "q8" | "int8" | "uint8" | "q4";
 export type BatchingStrategy = "sequential" | "length-bucketed";
+export type PoolingStrategy = "mean" | "cls";
 
 export interface BenchmarkChunk {
   readonly id: number;
@@ -75,6 +76,7 @@ export interface ProviderOptions {
   readonly maxLength: number;
   readonly documentPrefix: string;
   readonly queryPrefix: string;
+  readonly pooling: PoolingStrategy;
   readonly batchingStrategy: BatchingStrategy;
   readonly intraOpThreads?: number;
   readonly interOpThreads?: number;
@@ -90,6 +92,8 @@ export interface ProviderDescriptor {
   readonly modelFormat: string;
   readonly dtype: string;
   readonly device: string;
+  readonly pooling?: PoolingStrategy;
+  readonly inputStrategy?: string;
   readonly batchingStrategy: BatchingStrategy;
   readonly maxLength: number;
   readonly intraOpThreads?: number;

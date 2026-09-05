@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { meanPoolAndNormalize } from "../src/providers/direct-ort.js";
+import { clsPoolAndNormalize, meanPoolAndNormalize } from "../src/pooling.js";
 import { embedInBatches } from "../src/providers/shared.js";
 import { cosineSimilarity, normalizeVector, validateVectors } from "../src/vectors.js";
 
@@ -20,6 +20,13 @@ describe("benchmark vectors", () => {
     );
     expect(pooled[0]?.[0]).toBeCloseTo(Math.SQRT1_2, 6);
     expect(pooled[0]?.[1]).toBeCloseTo(Math.SQRT1_2, 6);
+  });
+
+  it("selects and normalizes the first token for CLS pooling", () => {
+    const pooled = clsPoolAndNormalize(new Float32Array([3, 4, 9, 9, 5, 12, 8, 15]), [2, 2, 2]);
+    expect(Array.from(pooled[0] ?? [])).toEqual([0.6000000238418579, 0.800000011920929]);
+    expect(pooled[1]?.[0]).toBeCloseTo(5 / 13, 6);
+    expect(pooled[1]?.[1]).toBeCloseTo(12 / 13, 6);
   });
 
   it("restores vectors after length-bucketed batching", async () => {

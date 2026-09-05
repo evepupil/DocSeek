@@ -15,7 +15,14 @@ const processStartedAt = performance.now();
 const resultMarker = "DOCSEEK_EMBEDDING_BENCH_RESULT ";
 
 const workerConfigSchema = z.object({
-  id: z.enum(["transformers", "transformers-core", "direct-ort", "fastembed", "llama-cpp"]),
+  id: z.enum([
+    "transformers",
+    "transformers-core",
+    "direct-ort",
+    "static-ort",
+    "fastembed",
+    "llama-cpp",
+  ]),
   model: z.string().min(1),
   modelPath: z.string().min(1).optional(),
   modelCacheDir: z.string().min(1),
@@ -24,6 +31,7 @@ const workerConfigSchema = z.object({
   maxLength: z.number().int().positive(),
   documentPrefix: z.string(),
   queryPrefix: z.string(),
+  pooling: z.enum(["mean", "cls"]),
   batchingStrategy: z.enum(["sequential", "length-bucketed"]),
   intraOpThreads: z.number().int().positive().optional(),
   interOpThreads: z.number().int().positive().optional(),
@@ -158,6 +166,7 @@ async function main(): Promise<void> {
     maxLength: parsed.maxLength,
     documentPrefix: parsed.documentPrefix,
     queryPrefix: parsed.queryPrefix,
+    pooling: parsed.pooling,
     batchingStrategy: parsed.batchingStrategy,
     ...(parsed.intraOpThreads ? { intraOpThreads: parsed.intraOpThreads } : {}),
     ...(parsed.interOpThreads ? { interOpThreads: parsed.interOpThreads } : {}),

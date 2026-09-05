@@ -2,13 +2,14 @@ import { access } from "node:fs/promises";
 import path from "node:path";
 
 import { packageVersion } from "../package-version.js";
+import { poolAndNormalize } from "../pooling.js";
+import { prepareTokenBatch } from "../token-inputs.js";
 import type {
   EmbeddingBatchResult,
   EmbeddingProvider,
   ProviderDescriptor,
   ProviderOptions,
 } from "../types.js";
-import { meanPoolAndNormalize } from "./direct-ort.js";
 import { embedInBatches } from "./shared.js";
 import { onnxThreadOptions } from "./session-options.js";
 
@@ -17,17 +18,25 @@ interface ModelTensor<T> {
   readonly data: ArrayLike<T>;
 }
 
-interface TokenizedBatch {
+interface ModelInputs {
   readonly input_ids: ModelTensor<bigint>;
   readonly attention_mask: ModelTensor<bigint>;
-  readonly [name: string]: ModelTensor<bigint>;
+  readonly token_type_ids?: ModelTensor<bigint>;
+}
+
+interface EncodedArrays {
+  readonly input_ids: readonly (readonly number[])[];
+  readonly token_type_ids?: readonly (readonly number[])[];
 }
 
 interface Tokenizer {
   (
     texts: readonly string[],
-    options: { padding: true; truncation: true; max_length: number },
-  ): TokenizedBatch;
+    options: { padding: false; truncation: false; return_tensor: false },
+  ): EncodedArrays;
+  readonly pad_token_id: number;
+  readonly sep_token_id: number;
+  readonly eos_token_id: number;
 }
 
 interface ModelOutput {
@@ -35,7 +44,7 @@ interface ModelOutput {
 }
 
 interface EmbeddingModel {
-  (inputs: TokenizedBatch): Promise<ModelOutput>;
+  (inputs: ModelInputs): Promise<ModelOutput>;
   dispose(): Promise<void>;
 }
 
@@ -48,6 +57,8 @@ export class TransformersCoreProvider implements EmbeddingProvider {
   readonly #options: ProviderOptions;
   #tokenizer: Tokenizer | undefined;
   #model: EmbeddingModel | undefined;
+  #createInt64Tensor:
+    ((data: BigInt64Array, dimensions: readonly number[]) => ModelTensor<bigint>) | undefined;
 
   constructor(options: ProviderOptions) {
     this.#options = options;
@@ -61,6 +72,8 @@ export class TransformersCoreProvider implements EmbeddingProvider {
       modelFormat: "ONNX",
       dtype: options.dtype,
       device: "cpu",
+      pooling: options.pooling,
+      inputStrategy: "head-tail-with-separator",
       batchingStrategy: options.batchingStrategy,
       maxLength: options.maxLength,
       ...(options.intraOpThreads !== undefined ? { intraOpThreads: options.intraOpThreads } : {}),
@@ -78,7 +91,7 @@ export class TransformersCoreProvider implements EmbeddingProvider {
   }
 
   async load(): Promise<void> {
-    const { AutoModel, AutoTokenizer, env } = await import("@huggingface/transformers");
+    const { AutoModel, AutoTokenizer, Tensor, env } = await import("@huggingface/transformers");
     env.cacheDir = this.#options.modelCacheDir;
     const sessionOptions = onnxThreadOptions(this.#options);
     const [tokenizer, model] = await Promise.all([
@@ -93,6 +106,7 @@ export class TransformersCoreProvider implements EmbeddingProvider {
     ]);
     this.#tokenizer = tokenizer as unknown as Tokenizer;
     this.#model = model as unknown as EmbeddingModel;
+    this.#createInt64Tensor = (data, dimensions) => new Tensor("int64", data, [...dimensions]);
   }
 
   async embedDocuments(
@@ -121,24 +135,49 @@ export class TransformersCoreProvider implements EmbeddingProvider {
     await this.#model?.dispose();
     this.#model = undefined;
     this.#tokenizer = undefined;
+    this.#createInt64Tensor = undefined;
   }
 
   async #embedBatch(texts: readonly string[]): Promise<readonly Float32Array[]> {
     const tokenizer = this.#tokenizer;
     const model = this.#model;
-    if (!tokenizer || !model) {
+    const createInt64Tensor = this.#createInt64Tensor;
+    if (!tokenizer || !model || !createInt64Tensor) {
       throw new Error("Transformers.js core provider has not been loaded.");
     }
-    const tokens = tokenizer(texts, {
-      padding: true,
-      truncation: true,
-      max_length: this.#options.maxLength,
+    const encoded = tokenizer(texts, {
+      padding: false,
+      truncation: false,
+      return_tensor: false,
     });
-    const output = await model(tokens);
+    const prepared = prepareTokenBatch(
+      {
+        inputIds: encoded.input_ids,
+        ...(encoded.token_type_ids ? { tokenTypeIds: encoded.token_type_ids } : {}),
+      },
+      this.#options.maxLength,
+      tokenizer.pad_token_id,
+      Number.isSafeInteger(tokenizer.sep_token_id)
+        ? tokenizer.sep_token_id
+        : tokenizer.eos_token_id,
+    );
+    const inputs: ModelInputs = {
+      input_ids: createInt64Tensor(prepared.inputIds, prepared.dimensions),
+      attention_mask: createInt64Tensor(prepared.attentionMask, prepared.dimensions),
+      ...(prepared.tokenTypeIds
+        ? { token_type_ids: createInt64Tensor(prepared.tokenTypeIds, prepared.dimensions) }
+        : {}),
+    };
+    const output = await model(inputs);
     const hidden = output.last_hidden_state;
     if (!(hidden.data instanceof Float32Array)) {
       throw new Error("Transformers.js core did not return Float32 hidden states.");
     }
-    return meanPoolAndNormalize(hidden.data, hidden.dims, tokens.attention_mask.data);
+    return poolAndNormalize(
+      this.#options.pooling,
+      hidden.data,
+      hidden.dims,
+      prepared.attentionMask,
+    );
   }
 }

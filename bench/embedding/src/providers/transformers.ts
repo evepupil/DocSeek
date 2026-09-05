@@ -7,6 +7,7 @@ import type {
   EmbeddingProvider,
   ProviderDescriptor,
   ProviderOptions,
+  PoolingStrategy,
 } from "../types.js";
 import { embedInBatches } from "./shared.js";
 import { onnxThreadOptions } from "./session-options.js";
@@ -17,7 +18,10 @@ interface ExtractionOutput {
 }
 
 interface FeatureExtractor {
-  (texts: string[], options: { pooling: "mean"; normalize: true }): Promise<ExtractionOutput>;
+  (
+    texts: string[],
+    options: { pooling: PoolingStrategy; normalize: true },
+  ): Promise<ExtractionOutput>;
   dispose(): Promise<void>;
 }
 
@@ -47,6 +51,8 @@ export class TransformersProvider implements EmbeddingProvider {
       modelFormat: "ONNX",
       dtype: options.dtype,
       device: "cpu",
+      pooling: options.pooling,
+      inputStrategy: "tokenizer-default",
       batchingStrategy: options.batchingStrategy,
       maxLength: options.maxLength,
       ...(options.intraOpThreads !== undefined ? { intraOpThreads: options.intraOpThreads } : {}),
@@ -108,7 +114,7 @@ export class TransformersProvider implements EmbeddingProvider {
       throw new Error("Transformers.js provider has not been loaded.");
     }
     const output = await this.#extractor([...texts], {
-      pooling: "mean",
+      pooling: this.#options.pooling,
       normalize: true,
     });
     const batch = output.dims[0];

@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "created_at": "2026-09-05",
+  "status": "quality-screen-complete",
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "node": "v24.18.0",
+    "cpu": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "logical_processors": 16,
+    "total_memory_gib": 29.9,
+    "nvidia_runtime": false
+  },
+  "corpus": {
+    "source_revision": "260ee675370b22de233ab5a224dfd1a4d92bd17c",
+    "markdown_documents": 136,
+    "markdown_bytes": 1630013,
+    "chunks": 1677,
+    "embedding_characters": 897645,
+    "source_snapshot_fingerprint": "514dfbf5c4fae56fa6e44b7d583c2a9a27d505b936d568c8eb9884ccb04ad0e7",
+    "benchmark_chunk_fingerprint": "d3f71fe4dc9baedb7e00d5652c4355e299ef9b66539f5617d11666b20a3d3ea0"
+  },
+  "quality_screen": {
+    "kind": "vector-only",
+    "cases": 18,
+    "top": 5,
+    "minimum_recall_at_5": 0.6666666666666666,
+    "minimum_top_1": 0.4444444444444444,
+    "required_stability": 1,
+    "note": "The historical 0.889 Recall@5 is the final hybrid-search result. Candidate models first have to preserve the aligned E5 vector-only control before a hybrid rebuild."
+  },
+  "models": [
+    {
+      "role": "control",
+      "model": "Xenova/multilingual-e5-small",
+      "revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "license": "MIT",
+      "format": "ONNX q8",
+      "pooling": "mean",
+      "input": "288 tokens, head-tail with separator, query/passage prefixes",
+      "dimension": 384,
+      "cache_mib": 129.1,
+      "model_sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "document_embedding_ms": 89771,
+      "chunks_per_second": 18.7,
+      "query_p50_ms": 5.9,
+      "peak_rss_mib": 790,
+      "recall_at_5": 0.6666666666666666,
+      "top_1": 0.4444444444444444,
+      "mrr": 0.5584786382262814,
+      "stability": 1,
+      "raw_result": "2026-09-05-e5-small-head-tail-control-run1.json",
+      "decision": "retained control"
+    },
+    {
+      "role": "candidate",
+      "model": "sentence-transformers/static-similarity-mrl-multilingual-v1",
+      "revision": "b68f4122911bcffcd6e1f695f2d99cd6788972d8",
+      "license": "Apache-2.0",
+      "format": "ONNX int8",
+      "pooling": "model-integrated mean",
+      "input": "288 tokens, head-tail, no special tokens or prefixes",
+      "dimension": 256,
+      "cache_mib": 105.8,
+      "model_sha256": "9eaf678438a0c2669e7388e90fd8ef25c3138dd3155cb0d62fd8114760405a3a",
+      "tokenizer_sha256": "11aaf894a4ccf3d95e8830e27c0f8152791fbbff2b988e29a265580b86edd216",
+      "document_embedding_ms": 2158,
+      "chunks_per_second": 777.2,
+      "query_p50_ms": 0.5,
+      "peak_rss_mib": 293,
+      "recall_at_5": 0.6111111111111112,
+      "top_1": 0.3888888888888889,
+      "mrr": 0.46247480898824267,
+      "stability": 1,
+      "raw_result": "2026-09-05-static-similarity-multilingual-256d.json",
+      "decision": "rejected before repeated runs: vector recall regressed"
+    },
+    {
+      "role": "candidate",
+      "model": "onnx-community/bge-small-zh-v1.5-ONNX",
+      "revision": "9507db33464b5da99a532ac26b2a251767cbc62b",
+      "base_model_license": "MIT",
+      "format": "ONNX q8 with external data",
+      "pooling": "CLS",
+      "input": "512 tokens, head-tail, no prefixes",
+      "dimension": 512,
+      "cache_mib": 23.2,
+      "model_sha256": "99a6e522710c00220c89f8c52e0cc5aa09d4cbb1c34c0e932eab3a9dfdc65df3",
+      "model_data_sha256": "952623481ca8beea884e3d3c9ecaf8a3c7bf1d0c21de29e970cd31af9d37a90b",
+      "document_embedding_ms": 51228,
+      "chunks_per_second": 32.7,
+      "query_p50_ms": 2.3,
+      "peak_rss_mib": 665,
+      "recall_at_5": 0.5,
+      "top_1": 0.2777777777777778,
+      "mrr": 0.40537402525760363,
+      "stability": 1,
+      "raw_result": "2026-09-05-bge-small-zh-v1.5-512-no-instruction-run1.json",
+      "decision": "rejected before repeated runs: vector recall regressed",
+      "variants": [
+        {
+          "input": "288 tokens, no query instruction",
+          "document_embedding_ms": 32389,
+          "recall_at_5": 0.4444444444444444,
+          "top_1": 0.2777777777777778,
+          "mrr": 0.36968318409114076,
+          "raw_result": "2026-09-05-bge-small-zh-v1.5-head-tail-no-instruction-run1.json"
+        },
+        {
+          "input": "288 tokens, official Chinese retrieval instruction",
+          "document_embedding_ms": 58937,
+          "recall_at_5": 0.3888888888888889,
+          "top_1": 0.2222222222222222,
+          "mrr": 0.31592504695882434,
+          "raw_result": "2026-09-05-bge-small-zh-v1.5-head-tail-instruction-run1.json"
+        }
+      ]
+    },
+    {
+      "role": "candidate",
+      "model": "ibm-granite/granite-embedding-97m-multilingual-r2",
+      "revision": "835ad14087e140460703cf0fae09f97d469d65c2",
+      "license": "Apache-2.0",
+      "format": "official ONNX quint8 AVX2",
+      "pooling": "CLS",
+      "input": "288 tokens, head-tail with separator, no prefixes",
+      "dimension": 384,
+      "cache_mib": 117.8,
+      "model_sha256": "a6022dd8220ea6f6595562a1328ee216f4a94faa55362f2f4747c80f1e78772e",
+      "document_embedding_ms": 125961,
+      "chunks_per_second": 13.3,
+      "query_p50_ms": 7.4,
+      "peak_rss_mib": 595,
+      "recall_at_5": 0.5,
+      "top_1": 0.3333333333333333,
+      "mrr": 0.4304726845138035,
+      "stability": 1,
+      "raw_result": "2026-09-05-granite-97m-r2-official-int8-head-tail-run1.json",
+      "decision": "rejected before repeated runs: vector recall regressed and one-run speed missed the target"
+    }
+  ],
+  "invalid_artifacts": [
+    {
+      "model": "onnx-community/granite-embedding-97m-multilingual-r2-ONNX",
+      "revision": "536a9f241cb3f02a9c5995a1e708c784bd274859",
+      "reason": "The q8 and int8 conversions collapsed the official cross-language example to approximately 0.999 cosine similarity for nearly every pair. The IBM AVX2 ONNX artifact reproduced the expected diagonal ranking and replaced it for evaluation."
+    }
+  ],
+  "selection": {
+    "model": "Xenova/multilingual-e5-small",
+    "production_changed": false,
+    "repeated_candidate_runs": false,
+    "reason": "Every new candidate failed the vector-only recall screen, so repeated timing and hybrid-index rebuilds were stopped.",
+    "milestone": "M7 remains in progress"
+  }
+}

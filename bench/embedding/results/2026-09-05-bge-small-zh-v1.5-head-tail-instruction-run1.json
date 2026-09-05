@@ -1,0 +1,1248 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-05T11:22:13.511Z",
+  "command": {
+    "provider": "transformers-core",
+    "model": "onnx-community/bge-small-zh-v1.5-ONNX",
+    "modelCache": "bench/embedding/cache/models",
+    "workCache": "bench/embedding/cache",
+    "index": ".docseek/evaluations/inferforge-m7-snapshot-20260905/candidate-288/.docseek/index.db",
+    "cases": "bench/embedding/cases/inferforge.json",
+    "dtype": "q8",
+    "maxLength": 288,
+    "documentPrefix": "",
+    "queryPrefix": "为这个句子生成表示以用于检索相关文章：",
+    "pooling": "cls",
+    "batchingStrategy": "length-bucketed",
+    "batchSizes": [
+      8
+    ],
+    "runs": 1,
+    "queryRuns": 2
+  },
+  "results": [
+    {
+      "ok": true,
+      "run": 1,
+      "environment": {
+        "platform": "win32",
+        "architecture": "x64",
+        "node": "v24.18.0",
+        "cpu": "AMD Ryzen 7 5800H with Radeon Graphics",
+        "logicalProcessors": 16,
+        "totalMemoryMiB": 30642.74609375
+      },
+      "provider": {
+        "id": "transformers-core",
+        "tool": "@huggingface/transformers core",
+        "toolVersion": "4.2.0",
+        "runtime": "onnxruntime-node",
+        "runtimeVersion": "1.24.3",
+        "model": "onnx-community/bge-small-zh-v1.5-ONNX",
+        "modelFormat": "ONNX",
+        "dtype": "q8",
+        "device": "cpu",
+        "pooling": "cls",
+        "inputStrategy": "head-tail-with-separator",
+        "batchingStrategy": "length-bucketed",
+        "maxLength": 288
+      },
+      "batchSize": 8,
+      "cacheWarmBefore": true,
+      "corpus": {
+        "totalChunksInIndex": 1677,
+        "documentCount": 136,
+        "totalCharacters": 897645,
+        "fingerprint": "d3f71fe4dc9baedb7e00d5652c4355e299ef9b66539f5617d11666b20a3d3ea0"
+      },
+      "dimension": 512,
+      "batchCalls": 210,
+      "timings": {
+        "corpusLoadMs": 96.2851,
+        "providerLoadMs": 845.3857,
+        "documentEmbeddingMs": 58936.924199999994,
+        "sqliteWriteMs": 47.296000000002095,
+        "queryEmbeddingP50Ms": 3.8009000000020023,
+        "queryEmbeddingP95Ms": 6.5195999999996275,
+        "totalMs": 60259.595400000006
+      },
+      "throughput": {
+        "chunksPerSecond": 28.454148613340774,
+        "charactersPerSecond": 15230.604789518353
+      },
+      "memory": {
+        "startingRssMiB": 62.0703125,
+        "peakRssMiB": 407.86328125
+      },
+      "quality": {
+        "metrics": {
+          "recallAt5": 0.3888888888888889,
+          "top1": 0.2222222222222222,
+          "meanReciprocalRank": 0.31592504695882434,
+          "stability": 1
+        },
+        "observations": [
+          {
+            "caseId": "sla-breach-no-refund",
+            "expectedRank": 9,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 1014,
+                "path": "inferforge-docs/review/2026-08-24-m0-fake-backend.md",
+                "heading": [
+                  "M0 Fake Backend 与 Backend 契约测试 Review",
+                  "结论"
+                ],
+                "startLine": 43,
+                "endLine": 45,
+                "score": 0.486936
+              },
+              {
+                "chunkId": 82,
+                "path": "inferforge-docs/模块设计/M0-领域契约.md",
+                "heading": [
+                  "M0 领域契约",
+                  "5. 关键决策",
+                  "5.4 成本与审计只追加"
+                ],
+                "startLine": 274,
+                "endLine": 276,
+                "score": 0.481912
+              },
+              {
+                "chunkId": 591,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "2. 队列与承诺模型",
+                  "2.2 承诺挂在价目行上，提交时冻结到任务"
+                ],
+                "startLine": 50,
+                "endLine": 70,
+                "score": 0.479306
+              },
+              {
+                "chunkId": 1215,
+                "path": "inferforge-docs/review/2026-08-28-m1-illustrious-engine.md",
+                "heading": [
+                  "M1 Illustrious Engine 模型契约与 Fleet 接线 Review",
+                  "结论"
+                ],
+                "startLine": 56,
+                "endLine": 58,
+                "score": 0.46911
+              },
+              {
+                "chunkId": 598,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "3. 排程模拟",
+                  "3.3 超时插队"
+                ],
+                "startLine": 137,
+                "endLine": 147,
+                "score": 0.466414
+              }
+            ]
+          },
+          {
+            "caseId": "worker-offline-retry",
+            "expectedRank": 11,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 1622,
+                "path": "inferforge-docs/review/2026-09-04-m3-deployments.md",
+                "heading": [
+                  "M3 部署规则 Review",
+                  "发现的问题",
+                  "[P2] 在线机器汇总没有去重"
+                ],
+                "startLine": 84,
+                "endLine": 90,
+                "score": 0.601162
+              },
+              {
+                "chunkId": 1532,
+                "path": "inferforge-docs/review/2026-08-28-m3-console-fleet-rebuild.md",
+                "heading": [
+                  "M3 Console 机队列表重建 Review",
+                  "发现的问题",
+                  "[P2] 掉线摘要的相对时长由浏览器时钟反推"
+                ],
+                "startLine": 34,
+                "endLine": 40,
+                "score": 0.59715
+              },
+              {
+                "chunkId": 534,
+                "path": "inferforge-docs/模块设计/M2-调度仿真与测试工程.md",
+                "heading": [
+                  "M2 调度仿真与测试工程",
+                  "6. 当前实现"
+                ],
+                "startLine": 219,
+                "endLine": 241,
+                "score": 0.595778
+              },
+              {
+                "chunkId": 1116,
+                "path": "inferforge-docs/review/2026-08-28-e2e-manual.md",
+                "heading": [
+                  "本机仿真栈人工端到端测试",
+                  "发现的问题",
+                  "[P0] 任何一次取消都会把机队长连接打到永久重连，机器从此接不到活"
+                ],
+                "startLine": 21,
+                "endLine": 28,
+                "score": 0.585621
+              },
+              {
+                "chunkId": 770,
+                "path": "inferforge-docs/模块设计/M5-自有机接入.md",
+                "heading": [
+                  "M5 自有机接入",
+                  "5. 关键决策",
+                  "5.3 掉线什么都不做"
+                ],
+                "startLine": 102,
+                "endLine": 104,
+                "score": 0.572353
+              }
+            ]
+          },
+          {
+            "caseId": "model-residency-scheduling",
+            "expectedRank": 10,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 503,
+                "path": "inferforge-docs/模块设计/M2-调度策略层.md",
+                "heading": [
+                  "M2 调度策略层"
+                ],
+                "startLine": 1,
+                "endLine": 9,
+                "score": 0.543624
+              },
+              {
+                "chunkId": 550,
+                "path": "inferforge-docs/模块设计/M2-全局能力池与模型驻留.md",
+                "heading": [
+                  "M2 全局能力池与模型驻留",
+                  "3. 关键决策",
+                  "3.2 调度单位是执行槽"
+                ],
+                "startLine": 105,
+                "endLine": 107,
+                "score": 0.542781
+              },
+              {
+                "chunkId": 49,
+                "path": "inferforge-docs/模块设计/M0-调度与派活.md",
+                "heading": [
+                  "M0 调度与派活"
+                ],
+                "startLine": 1,
+                "endLine": 8,
+                "score": 0.53204
+              },
+              {
+                "chunkId": 521,
+                "path": "inferforge-docs/模块设计/M2-调度仿真与测试工程.md",
+                "heading": [
+                  "M2 调度仿真与测试工程"
+                ],
+                "startLine": 1,
+                "endLine": 9,
+                "score": 0.531671
+              },
+              {
+                "chunkId": 539,
+                "path": "inferforge-docs/模块设计/M2-调度仿真与测试工程.md",
+                "heading": [
+                  "M2 调度仿真与测试工程",
+                  "9. 待扩展项"
+                ],
+                "startLine": 306,
+                "endLine": 312,
+                "score": 0.525578
+              }
+            ]
+          },
+          {
+            "caseId": "safe-scale-down-drain",
+            "expectedRank": 1,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 487,
+                "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+                "heading": [
+                  "M2 弹性容量调配",
+                  "4. 缩容控制器",
+                  "4.4 动作链与状态"
+                ],
+                "startLine": 162,
+                "endLine": 184,
+                "score": 0.479457
+              },
+              {
+                "chunkId": 482,
+                "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+                "heading": [
+                  "M2 弹性容量调配",
+                  "3. 本期容量判断",
+                  "3.1 触发条件"
+                ],
+                "startLine": 105,
+                "endLine": 117,
+                "score": 0.471989
+              },
+              {
+                "chunkId": 498,
+                "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+                "heading": [
+                  "M2 弹性容量调配",
+                  "7. 当前实现"
+                ],
+                "startLine": 258,
+                "endLine": 291,
+                "score": 0.463653
+              },
+              {
+                "chunkId": 599,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "3. 排程模拟",
+                  "3.4 保守的容量结论"
+                ],
+                "startLine": 149,
+                "endLine": 153,
+                "score": 0.461078
+              },
+              {
+                "chunkId": 490,
+                "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+                "heading": [
+                  "M2 弹性容量调配",
+                  "4. 缩容控制器",
+                  "4.7 参数"
+                ],
+                "startLine": 203,
+                "endLine": 213,
+                "score": 0.446634
+              }
+            ]
+          },
+          {
+            "caseId": "worker-accept-capacity",
+            "expectedRank": 3,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 1656,
+                "path": "inferforge-docs/review/2026-09-05-m2-scheduling-capacity.md",
+                "heading": [
+                  "M2 调度与弹性容量 Review",
+                  "发现的问题",
+                  "[P1] 旧的容量不足单子仍可能触发真实招机"
+                ],
+                "startLine": 80,
+                "endLine": 85,
+                "score": 0.587848
+              },
+              {
+                "chunkId": 412,
+                "path": "inferforge-docs/模块设计/M1-Vast容量适配.md",
+                "heading": [
+                  "M1 Vast 容量适配",
+                  "2. 结构与数据流",
+                  "2.1 目录"
+                ],
+                "startLine": 31,
+                "endLine": 40,
+                "score": 0.58104
+              },
+              {
+                "chunkId": 498,
+                "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+                "heading": [
+                  "M2 弹性容量调配",
+                  "7. 当前实现"
+                ],
+                "startLine": 258,
+                "endLine": 291,
+                "score": 0.569665
+              },
+              {
+                "chunkId": 414,
+                "path": "inferforge-docs/模块设计/M1-Vast容量适配.md",
+                "heading": [
+                  "M1 Vast 容量适配",
+                  "2. 结构与数据流",
+                  "2.3 官方机制的已查证事实（设计的依据）"
+                ],
+                "startLine": 59,
+                "endLine": 81,
+                "score": 0.568762
+              },
+              {
+                "chunkId": 410,
+                "path": "inferforge-docs/模块设计/M1-Vast容量适配.md",
+                "heading": [
+                  "M1 Vast 容量适配"
+                ],
+                "startLine": 1,
+                "endLine": 9,
+                "score": 0.552362
+              }
+            ]
+          },
+          {
+            "caseId": "artifact-upload-failure",
+            "expectedRank": 44,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 1499,
+                "path": "inferforge-docs/review/2026-08-28-m3-admin-tasks.md",
+                "heading": [
+                  "M3 管理数据接口 · 任务列表与详情 Review",
+                  "发现的问题",
+                  "[P2] 详情把非可用输出产物当成正常产物展示"
+                ],
+                "startLine": 59,
+                "endLine": 65,
+                "score": 0.555522
+              },
+              {
+                "chunkId": 1124,
+                "path": "inferforge-docs/review/2026-08-28-e2e-manual.md",
+                "heading": [
+                  "本机仿真栈人工端到端测试",
+                  "发现的问题",
+                  "[P2] 完成产物上传时摘要必须带 sha256: 前缀，但字段名和报错都没说"
+                ],
+                "startLine": 86,
+                "endLine": 92,
+                "score": 0.546506
+              },
+              {
+                "chunkId": 1360,
+                "path": "inferforge-docs/review/2026-08-28-m1-registry-blob-limit.md",
+                "heading": [
+                  "M1 运行镜像 · registry 大对象上限 Review",
+                  "结论"
+                ],
+                "startLine": 47,
+                "endLine": 49,
+                "score": 0.526382
+              },
+              {
+                "chunkId": 954,
+                "path": "inferforge-docs/预研/M1-真机首次派活出图.md",
+                "heading": [
+                  "M1 · 真机首次经 gRPC 派活出图",
+                  "跑通了什么"
+                ],
+                "startLine": 12,
+                "endLine": 26,
+                "score": 0.501731
+              },
+              {
+                "chunkId": 1115,
+                "path": "inferforge-docs/review/2026-08-28-e2e-manual.md",
+                "heading": [
+                  "本机仿真栈人工端到端测试",
+                  "跑通的部分"
+                ],
+                "startLine": 8,
+                "endLine": 17,
+                "score": 0.496757
+              }
+            ]
+          },
+          {
+            "caseId": "local-retry-journal",
+            "expectedRank": 3,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 1134,
+                "path": "inferforge-docs/review/2026-08-28-m1-cost-estimate.md",
+                "heading": [
+                  "M1 任务成本估价批次一 Review",
+                  "发现的问题",
+                  "[P1] 同一个 Cost Evidence key 的重复终态对账会变成证据冲突 ——已解决（2026-08-29：观测时间改用稳定终态。）"
+                ],
+                "startLine": 10,
+                "endLine": 16,
+                "score": 0.580886
+              },
+              {
+                "chunkId": 275,
+                "path": "inferforge-docs/模块设计/M1-云端机队网关.md",
+                "heading": [
+                  "M1 云端机队网关",
+                  "7. 关键决策",
+                  "7.4 消息可重放，执行不可重复"
+                ],
+                "startLine": 311,
+                "endLine": 313,
+                "score": 0.549996
+              },
+              {
+                "chunkId": 443,
+                "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
+                "heading": [
+                  "M1 Worker Agent 与 Vast 双通道",
+                  "2. 结构与数据流",
+                  "2.7 本地任务账本"
+                ],
+                "startLine": 182,
+                "endLine": 196,
+                "score": 0.543668
+              },
+              {
+                "chunkId": 1629,
+                "path": "inferforge-docs/review/2026-09-04-m3-pricing.md",
+                "heading": [
+                  "M3 模型代号、分档定价与提交链路 Review",
+                  "发现的问题",
+                  "[P1] 幂等重试会被当前代号状态拦截"
+                ],
+                "startLine": 20,
+                "endLine": 26,
+                "score": 0.540062
+              },
+              {
+                "chunkId": 456,
+                "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
+                "heading": [
+                  "M1 Worker Agent 与 Vast 双通道",
+                  "4. 关键决策",
+                  "4.7 云端拥有长队列与整次重试"
+                ],
+                "startLine": 313,
+                "endLine": 315,
+                "score": 0.531967
+              }
+            ]
+          },
+          {
+            "caseId": "vast-auto-recruitment",
+            "expectedRank": 1,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 37,
+                "path": "inferforge-docs/架构设计.md",
+                "heading": [
+                  "InferForge 架构设计",
+                  "5. 数据流",
+                  "5.3 招募与定价（serverless 的扩缩执行）"
+                ],
+                "startLine": 219,
+                "endLine": 233,
+                "score": 0.49416
+              },
+              {
+                "chunkId": 1661,
+                "path": "inferforge-docs/roadmap.md",
+                "heading": [
+                  "InferForge Roadmap"
+                ],
+                "startLine": 1,
+                "endLine": 5,
+                "score": 0.492307
+              },
+              {
+                "chunkId": 1428,
+                "path": "inferforge-docs/review/2026-08-28-m1-vast-config.md",
+                "heading": [
+                  "M1 Vast 招机配置与镜像依赖 Review"
+                ],
+                "startLine": 1,
+                "endLine": 6,
+                "score": 0.486214
+              },
+              {
+                "chunkId": 1436,
+                "path": "inferforge-docs/review/2026-08-28-m1-vast-config.md",
+                "heading": [
+                  "M1 Vast 招机配置与镜像依赖 Review",
+                  "结论"
+                ],
+                "startLine": 65,
+                "endLine": 67,
+                "score": 0.480217
+              },
+              {
+                "chunkId": 1667,
+                "path": "inferforge-docs/roadmap.md",
+                "heading": [
+                  "InferForge Roadmap",
+                  "里程碑详情（涉及分层 → 架构设计）",
+                  "M2 · 模型感知的 SLA 调度与成本最优招机"
+                ],
+                "startLine": 34,
+                "endLine": 38,
+                "score": 0.478645
+              }
+            ]
+          },
+          {
+            "caseId": "queue-estimated-wait",
+            "expectedRank": 18,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 590,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "2. 队列与承诺模型",
+                  "2.1 一份全局队列"
+                ],
+                "startLine": 38,
+                "endLine": 48,
+                "score": 0.622915
+              },
+              {
+                "chunkId": 1572,
+                "path": "inferforge-docs/review/2026-08-28-m3-console-tasks.md",
+                "heading": [
+                  "M3 Console 任务页 Review",
+                  "发现的问题",
+                  "[P1] 任务详情把排队耗时固定显示为“等待 3 秒”"
+                ],
+                "startLine": 26,
+                "endLine": 32,
+                "score": 0.602671
+              },
+              {
+                "chunkId": 606,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "5. 关键决策",
+                  "5.5 本期不做需求持续性预测"
+                ],
+                "startLine": 203,
+                "endLine": 205,
+                "score": 0.586473
+              },
+              {
+                "chunkId": 1497,
+                "path": "inferforge-docs/review/2026-08-28-m3-admin-tasks.md",
+                "heading": [
+                  "M3 管理数据接口 · 任务列表与详情 Review",
+                  "发现的问题",
+                  "[P2] 显式时间范围允许落在未来，队列摘要会计算出超前等待时长"
+                ],
+                "startLine": 43,
+                "endLine": 49,
+                "score": 0.572921
+              },
+              {
+                "chunkId": 615,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "9. 待扩展项"
+                ],
+                "startLine": 291,
+                "endLine": 297,
+                "score": 0.55038
+              }
+            ]
+          },
+          {
+            "caseId": "unknown-paid-action",
+            "expectedRank": 207,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 158,
+                "path": "inferforge-docs/模块设计/M0-Fake后端与Backend契约测试.md",
+                "heading": [
+                  "M0 Fake Backend 与 Backend 契约测试",
+                  "3. 关键决策",
+                  "3.5 默认值有用且零成本"
+                ],
+                "startLine": 122,
+                "endLine": 124,
+                "score": 0.545811
+              },
+              {
+                "chunkId": 1138,
+                "path": "inferforge-docs/review/2026-08-28-m1-cost-estimate.md",
+                "heading": [
+                  "M1 任务成本估价批次一 Review",
+                  "验证结果"
+                ],
+                "startLine": 40,
+                "endLine": 48,
+                "score": 0.530175
+              },
+              {
+                "chunkId": 1014,
+                "path": "inferforge-docs/review/2026-08-24-m0-fake-backend.md",
+                "heading": [
+                  "M0 Fake Backend 与 Backend 契约测试 Review",
+                  "结论"
+                ],
+                "startLine": 43,
+                "endLine": 45,
+                "score": 0.526432
+              },
+              {
+                "chunkId": 968,
+                "path": "inferforge-docs/预研/M1-Illustrious生图工作流对比.md",
+                "heading": [
+                  "M1 · Illustrious XL 生图工作流对比",
+                  "建议改动"
+                ],
+                "startLine": 66,
+                "endLine": 77,
+                "score": 0.519927
+              },
+              {
+                "chunkId": 1134,
+                "path": "inferforge-docs/review/2026-08-28-m1-cost-estimate.md",
+                "heading": [
+                  "M1 任务成本估价批次一 Review",
+                  "发现的问题",
+                  "[P1] 同一个 Cost Evidence key 的重复终态对账会变成证据冲突 ——已解决（2026-08-29：观测时间改用稳定终态。）"
+                ],
+                "startLine": 10,
+                "endLine": 16,
+                "score": 0.517334
+              }
+            ]
+          },
+          {
+            "caseId": "gpu-rental-cost-breakdown",
+            "expectedRank": 3,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 1139,
+                "path": "inferforge-docs/review/2026-08-28-m1-cost-estimate.md",
+                "heading": [
+                  "M1 任务成本估价批次一 Review",
+                  "结论"
+                ],
+                "startLine": 50,
+                "endLine": 52,
+                "score": 0.521711
+              },
+              {
+                "chunkId": 724,
+                "path": "inferforge-docs/模块设计/M3-Web管理控制台.md",
+                "heading": [
+                  "M3 Web 管理控制台",
+                  "2. 侧边栏与功能划分",
+                  "2.13 成本"
+                ],
+                "startLine": 305,
+                "endLine": 309,
+                "score": 0.505344
+              },
+              {
+                "chunkId": 971,
+                "path": "inferforge-docs/预研/M1-Vast成本构成实测.md",
+                "heading": [
+                  "M1 Vast 成本构成实测",
+                  "1. 一天的账单拆开看"
+                ],
+                "startLine": 10,
+                "endLine": 19,
+                "score": 0.500217
+              },
+              {
+                "chunkId": 181,
+                "path": "inferforge-docs/模块设计/M1-成本证据与对账.md",
+                "heading": [
+                  "M1 成本证据与对账"
+                ],
+                "startLine": 1,
+                "endLine": 10,
+                "score": 0.498511
+              },
+              {
+                "chunkId": 196,
+                "path": "inferforge-docs/模块设计/M1-成本证据与对账.md",
+                "heading": [
+                  "M1 成本证据与对账",
+                  "4. 当前实现"
+                ],
+                "startLine": 168,
+                "endLine": 199,
+                "score": 0.490961
+              }
+            ]
+          },
+          {
+            "caseId": "sla-safe-reorder",
+            "expectedRank": 1,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 604,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "5. 关键决策",
+                  "5.3 插队必须保护所有人"
+                ],
+                "startLine": 195,
+                "endLine": 197,
+                "score": 0.580248
+              },
+              {
+                "chunkId": 598,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "3. 排程模拟",
+                  "3.3 超时插队"
+                ],
+                "startLine": 137,
+                "endLine": 147,
+                "score": 0.489161
+              },
+              {
+                "chunkId": 603,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "5. 关键决策",
+                  "5.2 跳过解决队头堵塞"
+                ],
+                "startLine": 191,
+                "endLine": 193,
+                "score": 0.482452
+              },
+              {
+                "chunkId": 1553,
+                "path": "inferforge-docs/review/2026-08-28-m3-console-layout.md",
+                "heading": [
+                  "M3 Web 管理控制台 · 页面骨架与任务、机队改版 Review",
+                  "发现的问题",
+                  "[P1] 机队摘要在筛选后仍显示全机队数据"
+                ],
+                "startLine": 24,
+                "endLine": 30,
+                "score": 0.473394
+              },
+              {
+                "chunkId": 1098,
+                "path": "inferforge-docs/review/2026-08-25-m1-fleet-execution-backend.md",
+                "heading": [
+                  "M1 机队执行后端 Review",
+                  "结论"
+                ],
+                "startLine": 70,
+                "endLine": 72,
+                "score": 0.460703
+              }
+            ]
+          },
+          {
+            "caseId": "avoid-duplicate-scale-out",
+            "expectedRank": 1,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 483,
+                "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+                "heading": [
+                  "M2 弹性容量调配",
+                  "3. 本期容量判断",
+                  "3.2 已知取舍"
+                ],
+                "startLine": 119,
+                "endLine": 130,
+                "score": 0.616097
+              },
+              {
+                "chunkId": 501,
+                "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+                "heading": [
+                  "M2 弹性容量调配",
+                  "9. 待扩展项"
+                ],
+                "startLine": 328,
+                "endLine": 339,
+                "score": 0.613207
+              },
+              {
+                "chunkId": 484,
+                "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+                "heading": [
+                  "M2 弹性容量调配",
+                  "4. 缩容控制器",
+                  "4.1 管辖范围"
+                ],
+                "startLine": 134,
+                "endLine": 140,
+                "score": 0.54957
+              },
+              {
+                "chunkId": 615,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "9. 待扩展项"
+                ],
+                "startLine": 291,
+                "endLine": 297,
+                "score": 0.547152
+              },
+              {
+                "chunkId": 250,
+                "path": "inferforge-docs/模块设计/M1-引擎启动与运行时.md",
+                "heading": [
+                  "M1 引擎启动与运行时",
+                  "9. 待扩展项"
+                ],
+                "startLine": 188,
+                "endLine": 192,
+                "score": 0.545263
+              }
+            ]
+          },
+          {
+            "caseId": "download-load-states",
+            "expectedRank": 21,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 1336,
+                "path": "inferforge-docs/review/2026-08-28-m1-modelset-build-download.md",
+                "heading": [
+                  "M1 运行镜像 · 模型集构建期下载 Review",
+                  "结论"
+                ],
+                "startLine": 49,
+                "endLine": 51,
+                "score": 0.57223
+              },
+              {
+                "chunkId": 1224,
+                "path": "inferforge-docs/review/2026-08-28-m1-illustrious.md",
+                "heading": [
+                  "M1 Illustrious 模型集与工作流 Review",
+                  "发现的问题",
+                  "[P1] 模型集没有把权重版本和 workflow 模型版本绑定"
+                ],
+                "startLine": 18,
+                "endLine": 24,
+                "score": 0.56504
+              },
+              {
+                "chunkId": 1335,
+                "path": "inferforge-docs/review/2026-08-28-m1-modelset-build-download.md",
+                "heading": [
+                  "M1 运行镜像 · 模型集构建期下载 Review",
+                  "正向观察"
+                ],
+                "startLine": 43,
+                "endLine": 47,
+                "score": 0.562188
+              },
+              {
+                "chunkId": 1632,
+                "path": "inferforge-docs/review/2026-09-04-m3-pricing.md",
+                "heading": [
+                  "M3 模型代号、分档定价与提交链路 Review",
+                  "结论"
+                ],
+                "startLine": 38,
+                "endLine": 40,
+                "score": 0.549599
+              },
+              {
+                "chunkId": 1295,
+                "path": "inferforge-docs/review/2026-08-28-m1-images-layer-order.md",
+                "heading": [
+                  "M1 运行镜像模型集层顺序 Review",
+                  "正向观察"
+                ],
+                "startLine": 36,
+                "endLine": 40,
+                "score": 0.546914
+              }
+            ]
+          },
+          {
+            "caseId": "queue-start-boundary",
+            "expectedRank": 8,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 1572,
+                "path": "inferforge-docs/review/2026-08-28-m3-console-tasks.md",
+                "heading": [
+                  "M3 Console 任务页 Review",
+                  "发现的问题",
+                  "[P1] 任务详情把排队耗时固定显示为“等待 3 秒”"
+                ],
+                "startLine": 26,
+                "endLine": 32,
+                "score": 0.616695
+              },
+              {
+                "chunkId": 592,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "2. 队列与承诺模型",
+                  "2.3 稳定的先来后到"
+                ],
+                "startLine": 72,
+                "endLine": 78,
+                "score": 0.613417
+              },
+              {
+                "chunkId": 598,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "3. 排程模拟",
+                  "3.3 超时插队"
+                ],
+                "startLine": 137,
+                "endLine": 147,
+                "score": 0.61298
+              },
+              {
+                "chunkId": 590,
+                "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+                "heading": [
+                  "M2 SLA 队列与派活",
+                  "2. 队列与承诺模型",
+                  "2.1 一份全局队列"
+                ],
+                "startLine": 38,
+                "endLine": 48,
+                "score": 0.603674
+              },
+              {
+                "chunkId": 565,
+                "path": "inferforge-docs/模块设计/M2-任务耗时统计与预测.md",
+                "heading": [
+                  "M2 任务耗时统计与预测",
+                  "3. 时间事实",
+                  "3.1 任务阶段"
+                ],
+                "startLine": 86,
+                "endLine": 102,
+                "score": 0.588773
+              }
+            ]
+          },
+          {
+            "caseId": "preemption-retry-en",
+            "expectedRank": 48,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 997,
+                "path": "inferforge-docs/review/2026-08-24-m0-app-reconcile.md",
+                "heading": [
+                  "M0 应用用例与对账 Review",
+                  "验证结果"
+                ],
+                "startLine": 28,
+                "endLine": 35,
+                "score": 0.477734
+              },
+              {
+                "chunkId": 118,
+                "path": "inferforge-docs/模块设计/M0-项目骨架与工程门禁.md",
+                "heading": [
+                  "M0 项目骨架与工程门禁",
+                  "2. 目录结构与数据流",
+                  "2.2 本批实际创建"
+                ],
+                "startLine": 85,
+                "endLine": 102,
+                "score": 0.474541
+              },
+              {
+                "chunkId": 368,
+                "path": "inferforge-docs/模块设计/M1-PostgreSQL持久化.md",
+                "heading": [
+                  "M1 PostgreSQL 持久化",
+                  "4. 写入流程与事务边界",
+                  "4.2 提交 Job"
+                ],
+                "startLine": 156,
+                "endLine": 166,
+                "score": 0.472575
+              },
+              {
+                "chunkId": 28,
+                "path": "inferforge-docs/架构设计.md",
+                "heading": [
+                  "InferForge 架构设计",
+                  "3. 分层与职责",
+                  "3.3 后端实现 B：自管 hosted（条件性执行器，后期）"
+                ],
+                "startLine": 110,
+                "endLine": 119,
+                "score": 0.472244
+              },
+              {
+                "chunkId": 923,
+                "path": "inferforge-docs/预研/M1-运行镜像构建与启动耗时.md",
+                "heading": [
+                  "M1 运行镜像 · 构建与启动耗时",
+                  "3a. 首次跑通：illustrious 进 idle（2026-08-27）",
+                  "修掉的一个隐患"
+                ],
+                "startLine": 193,
+                "endLine": 197,
+                "score": 0.470715
+              }
+            ]
+          },
+          {
+            "caseId": "idempotent-submit-en",
+            "expectedRank": 10,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 155,
+                "path": "inferforge-docs/模块设计/M0-Fake后端与Backend契约测试.md",
+                "heading": [
+                  "M0 Fake Backend 与 Backend 契约测试",
+                  "3. 关键决策",
+                  "3.2 unknown 可以保留已创建执行"
+                ],
+                "startLine": 110,
+                "endLine": 112,
+                "score": 0.540464
+              },
+              {
+                "chunkId": 1072,
+                "path": "inferforge-docs/review/2026-08-25-m0-fake-backend-fix.md",
+                "heading": [
+                  "M0 Fake Backend Review 修复复核",
+                  "验证结果"
+                ],
+                "startLine": 22,
+                "endLine": 27,
+                "score": 0.528295
+              },
+              {
+                "chunkId": 1066,
+                "path": "inferforge-docs/review/2026-08-25-m0-bootstrap-fix.md",
+                "heading": [
+                  "M0 启动组装 Review 修复复核",
+                  "验证结果"
+                ],
+                "startLine": 14,
+                "endLine": 19,
+                "score": 0.526601
+              },
+              {
+                "chunkId": 1194,
+                "path": "inferforge-docs/review/2026-08-28-m1-illustrious-benchmark.md",
+                "heading": [
+                  "M1 Illustrious 生图 Benchmark Review",
+                  "发现的问题",
+                  "[P1] 单次 ComfyUI 响应异常会中止整批实验并丢失清单"
+                ],
+                "startLine": 26,
+                "endLine": 32,
+                "score": 0.522643
+              },
+              {
+                "chunkId": 1610,
+                "path": "inferforge-docs/review/2026-09-04-m3-api-keys-quota.md",
+                "heading": [
+                  "M3 API Key 额度与管理页 Review",
+                  "验证结果"
+                ],
+                "startLine": 38,
+                "endLine": 42,
+                "score": 0.522243
+              }
+            ]
+          },
+          {
+            "caseId": "artifact-retry-en",
+            "expectedRank": 124,
+            "stable": true,
+            "top": [
+              {
+                "chunkId": 923,
+                "path": "inferforge-docs/预研/M1-运行镜像构建与启动耗时.md",
+                "heading": [
+                  "M1 运行镜像 · 构建与启动耗时",
+                  "3a. 首次跑通：illustrious 进 idle（2026-08-27）",
+                  "修掉的一个隐患"
+                ],
+                "startLine": 193,
+                "endLine": 197,
+                "score": 0.573491
+              },
+              {
+                "chunkId": 1227,
+                "path": "inferforge-docs/review/2026-08-28-m1-illustrious.md",
+                "heading": [
+                  "M1 Illustrious 模型集与工作流 Review",
+                  "前批问题复核"
+                ],
+                "startLine": 42,
+                "endLine": 45,
+                "score": 0.546596
+              },
+              {
+                "chunkId": 1173,
+                "path": "inferforge-docs/review/2026-08-28-m1-ghcr-inventory.md",
+                "heading": [
+                  "M1 GHCR 镜像清单客户端补审 Review",
+                  "前批问题复核"
+                ],
+                "startLine": 18,
+                "endLine": 21,
+                "score": 0.544927
+              },
+              {
+                "chunkId": 941,
+                "path": "inferforge-docs/预研/M1-运行镜像构建与启动耗时.md",
+                "heading": [
+                  "M1 运行镜像 · 构建与启动耗时",
+                  "5. 待补"
+                ],
+                "startLine": 411,
+                "endLine": 415,
+                "score": 0.54434
+              },
+              {
+                "chunkId": 1293,
+                "path": "inferforge-docs/review/2026-08-28-m1-images-layer-order.md",
+                "heading": [
+                  "M1 运行镜像模型集层顺序 Review",
+                  "验证结果"
+                ],
+                "startLine": 20,
+                "endLine": 28,
+                "score": 0.542584
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
