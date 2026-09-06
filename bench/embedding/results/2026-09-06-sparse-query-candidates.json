@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-09-06",
-  "status": "sparse-query-quality-screen-complete",
+  "status": "sparse-query-fusion-calibrated",
   "environment": {
     "platform": "win32",
     "architecture": "x64",
@@ -47,24 +47,33 @@
   },
   "production_hybrid": {
     "model": "Xenova/multilingual-e5-small",
-    "index_configuration": "current production weights, confidence filtering, and vector plus FTS fusion",
-    "recall_at_5": 0.26666666666666666,
-    "top_1": 0.1111111111111111,
-    "mrr": 0.1635185185185185,
-    "intent_any_recall_at_5": 0.6,
-    "semantic_rescue_hits_at_5": 3,
-    "semantic_rescue_rate_at_5": 0.05454545454545454,
-    "candidate_compression_hits_at_5": 19,
-    "candidate_compression_rate_at_5": 0.5757575757575758,
+    "index_configuration": "same frozen 288-token index; term-aware confidence and vector plus FTS fusion",
+    "previous_recall_at_5": 0.26666666666666666,
+    "recall_at_5": 0.35555555555555557,
+    "top_1": 0.13333333333333333,
+    "mrr": 0.20814814814814808,
+    "intent_any_recall_at_5": 0.7666666666666667,
+    "semantic_rescue_hits_at_5": 8,
+    "semantic_rescue_rate_at_5": 0.14545454545454545,
+    "candidate_compression_hits_at_5": 22,
+    "candidate_compression_rate_at_5": 0.6666666666666666,
     "by_kind": {
-      "single-term": { "recall_at_5": 0.26666666666666666, "semantic_rescue_rate_at_5": 0.045454545454545456 },
-      "term-bundle": { "recall_at_5": 0.43333333333333335, "semantic_rescue_rate_at_5": 0.25 },
-      "alternate-vocabulary": { "recall_at_5": 0.1, "semantic_rescue_rate_at_5": 0 }
+      "single-term": { "recall_at_5": 0.3333333333333333, "semantic_rescue_rate_at_5": 0.13636363636363635 },
+      "term-bundle": { "recall_at_5": 0.6, "semantic_rescue_rate_at_5": 0.5 },
+      "alternate-vocabulary": { "recall_at_5": 0.13333333333333333, "semantic_rescue_rate_at_5": 0.04 }
     },
-    "search_p50_ms": 57.349,
-    "search_p95_ms": 82.428,
-    "raw_result": "2026-09-06-docseek-hybrid-sparse.json",
-    "finding": "The current confidence and fusion layer drops sparse semantic candidates that rank inside the vector-only top five."
+    "same_index_routes": {
+      "vector_recall_at_5": 0.32222222222222224,
+      "keyword_recall_at_5": 0.23333333333333334,
+      "union_recall_at_5": 0.4,
+      "union_hits": 36,
+      "retained_union_hits": 32,
+      "union_retention_rate_at_5": 0.8888888888888888
+    },
+    "search_p50_ms": 61.039,
+    "search_p95_ms": 83.551,
+    "raw_result": "2026-09-06-docseek-hybrid-sparse-fusion-v2.json",
+    "finding": "Term-aware confidence and rank-led fusion recover eight additional probes while the expanded DocSeek no-answer suite retains 0.950 rejection."
   },
   "models": [
     {
@@ -151,6 +160,14 @@
   "selection": {
     "model": "Xenova/multilingual-e5-small",
     "production_changed": false,
+    "retrieval_changed": true,
+    "self_quality": {
+      "positive_recall_at_5": 1,
+      "positive_top_1": 0.8571428571428571,
+      "exact_top_1": 1,
+      "negative_rejection": 0.95,
+      "determinism": 1
+    },
     "reason": "E5 leads every candidate in sparse Recall@5, intent coverage, semantic rescue, and noisy-candidate compression. Its absolute sparse recall remains low enough to require further retrieval improvement.",
     "quality_floor_for_future_candidates": {
       "recall_at_5": 0.34444444444444444,
@@ -159,7 +176,7 @@
       "candidate_compression_rate_at_5": 0.6363636363636364,
       "stability": 1
     },
-    "production_follow_up": "Raise sparse hybrid recall without weakening the existing no-answer rejection gate.",
+    "production_follow_up": "Improve alternate-vocabulary recall and recover the four same-index union hits still displaced from the final top five.",
     "milestone": "M7 remains in progress"
   }
 }

@@ -22,6 +22,7 @@ interface ThresholdCheck {
 function searchRequest(testCase: QualityCase): SearchRequest {
   return {
     query: testCase.query,
+    ...(testCase.query_parts ? { queryParts: testCase.query_parts } : {}),
     top: 5,
     includeSnippet: false,
     ...(testCase.path ? { path: testCase.path } : {}),

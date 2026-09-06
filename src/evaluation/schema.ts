@@ -10,6 +10,7 @@ const caseSchema = z
     id: z.string().min(1),
     category: z.enum(["semantic", "exact", "filter", "negative"]),
     query: z.string().min(1),
+    query_parts: z.array(z.string().trim().min(1)).min(1).max(5).optional(),
     path: z.string().min(1).optional(),
     expected: z.array(expectationSchema).min(1).optional(),
   })

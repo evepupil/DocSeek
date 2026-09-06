@@ -4,9 +4,14 @@ import { parseArgs } from "node:util";
 import { pathToFileURL } from "node:url";
 
 import { loadCorpus } from "./corpus.js";
-import { toRankedLocations, type SearchLocation } from "./hybrid-results.js";
+import {
+  summarizeRouteCoverage,
+  toRankedLocations,
+  type SearchLocation,
+} from "./hybrid-results.js";
 import { loadQualitySuite, observeQuality, summarizeQuality } from "./quality.js";
 import { percentile } from "./stats.js";
+import type { SemanticQualityResult } from "./types.js";
 
 const packageRoot = path.resolve(import.meta.dirname, "../..");
 const repositoryRoot = path.resolve(packageRoot, "../..");
@@ -30,10 +35,38 @@ interface ProjectContext {
 
 interface SearchStore {
   close(): void;
+  vectorCandidates(
+    vector: Float32Array,
+    request: SearchRequest,
+    limit: number,
+  ): readonly SearchCandidate[];
+  keywordCandidates(
+    ftsQuery: string,
+    request: SearchRequest,
+    limit: number,
+  ): readonly SearchCandidate[];
 }
 
 interface SearchProvider {
+  embedQuery(text: string): Promise<Float32Array>;
   dispose(): Promise<void>;
+}
+
+interface SearchCandidate {
+  readonly path: string;
+  readonly startLine: number;
+  readonly endLine: number;
+  readonly heading: readonly string[];
+  readonly rank: number;
+  readonly distance?: number;
+}
+
+interface SearchRequest {
+  readonly query: string;
+  readonly queryParts: readonly string[];
+  readonly top: number;
+  readonly includeSnippet: false;
+  readonly collectionIds?: readonly string[];
 }
 
 interface SearchResponse {
@@ -51,12 +84,9 @@ interface RootRuntime {
     readonly provider: SearchProvider;
     readonly collectionId: string;
     readonly config: unknown;
-    readonly request: {
-      readonly query: string;
-      readonly top: number;
-      readonly includeSnippet: false;
-    };
+    readonly request: SearchRequest;
   }) => Promise<SearchResponse>;
+  readonly buildFtsQuery: (text: string) => string | undefined;
 }
 
 function resolveUserPath(value: string): string {
@@ -97,12 +127,13 @@ async function rootModule(relativePath: string): Promise<unknown> {
 }
 
 async function loadRootRuntime(): Promise<RootRuntime> {
-  const [status, config, embedding, storage, search] = await Promise.all([
+  const [status, config, embedding, storage, search, terms] = await Promise.all([
     rootModule("application/get-status.js"),
     rootModule("config/config-file.js"),
     rootModule("embedding/factory.js"),
     rootModule("storage/index-store.js"),
     rootModule("application/execute-search.js"),
+    rootModule("search/terms.js"),
   ]);
   return {
     getStatus: (status as { getStatus: RootRuntime["getStatus"] }).getStatus,
@@ -113,6 +144,32 @@ async function loadRootRuntime(): Promise<RootRuntime> {
     ).createEmbeddingProvider,
     IndexStore: (storage as { IndexStore: RootRuntime["IndexStore"] }).IndexStore,
     executeSearch: (search as { executeSearch: RootRuntime["executeSearch"] }).executeSearch,
+    buildFtsQuery: (terms as { buildFtsQuery: RootRuntime["buildFtsQuery"] }).buildFtsQuery,
+  };
+}
+
+function candidateLocation(
+  candidate: SearchCandidate,
+  route: "vector" | "keyword",
+): SearchLocation {
+  return {
+    path: candidate.path,
+    startLine: candidate.startLine,
+    endLine: candidate.endLine,
+    heading: candidate.heading,
+    score:
+      route === "vector" && candidate.distance !== undefined
+        ? 1 - candidate.distance
+        : 1 / candidate.rank,
+  };
+}
+
+function compactQuality(
+  result: SemanticQualityResult,
+): Omit<SemanticQualityResult, "observations"> {
+  return {
+    metrics: result.metrics,
+    ...(result.sparse ? { sparse: result.sparse } : {}),
   };
 }
 
@@ -158,9 +215,49 @@ async function main(): Promise<void> {
   const store = new runtime.IndexStore(temporaryIndexPath, true);
   const provider = runtime.createEmbeddingProvider(context.config.embedding);
   const observations = [];
+  const vectorObservations = [];
+  const keywordObservations = [];
   const latencies: number[] = [];
   try {
     for (const testCase of suite.cases) {
+      const request: SearchRequest = {
+        query: testCase.query,
+        queryParts: testCase.terms,
+        top: 5,
+        includeSnippet: false,
+      };
+      const scopedRequest = {
+        ...request,
+        collectionIds: [context.config.projectId],
+      };
+      const queryVector = await provider.embedQuery(testCase.query);
+      const vectorCandidates = store.vectorCandidates(queryVector, scopedRequest, 5);
+      const ftsQuery = runtime.buildFtsQuery(testCase.query);
+      const keywordCandidates = ftsQuery ? store.keywordCandidates(ftsQuery, scopedRequest, 5) : [];
+      vectorObservations.push(
+        observeQuality(
+          testCase,
+          [
+            toRankedLocations(
+              vectorCandidates.map((candidate) => candidateLocation(candidate, "vector")),
+              corpus.chunks,
+            ),
+          ],
+          corpus.chunks,
+        ),
+      );
+      keywordObservations.push(
+        observeQuality(
+          testCase,
+          [
+            toRankedLocations(
+              keywordCandidates.map((candidate) => candidateLocation(candidate, "keyword")),
+              corpus.chunks,
+            ),
+          ],
+          corpus.chunks,
+        ),
+      );
       const searches = [];
       for (let run = 0; run < 2; run += 1) {
         const response = await runtime.executeSearch({
@@ -168,7 +265,7 @@ async function main(): Promise<void> {
           provider,
           collectionId: context.config.projectId,
           config: context.config.search,
-          request: { query: testCase.query, top: 5, includeSnippet: false },
+          request,
         });
         latencies.push(response.diagnostics.timings.totalMs);
         searches.push(toRankedLocations(response.results, corpus.chunks));
@@ -189,13 +286,16 @@ async function main(): Promise<void> {
   }
 
   const quality = summarizeQuality(observations);
+  const vectorQuality = summarizeQuality(vectorObservations);
+  const keywordQuality = summarizeQuality(keywordObservations);
   const report = {
-    version: 1,
+    version: 2,
     createdAt: new Date().toISOString(),
     command: {
       project: reportPath(projectRoot),
       cases: reportPath(casesPath),
       repeatedSearches: 2,
+      routeBaselineSearches: 1,
       top: 5,
     },
     corpus: {
@@ -209,6 +309,11 @@ async function main(): Promise<void> {
       search: context.config.search,
     },
     quality,
+    routeBaselines: {
+      vector: compactQuality(vectorQuality),
+      keyword: compactQuality(keywordQuality),
+      coverage: summarizeRouteCoverage(vectorObservations, keywordObservations, observations),
+    },
     timings: {
       searchP50Ms: percentile(latencies, 0.5),
       searchP95Ms: percentile(latencies, 0.95),

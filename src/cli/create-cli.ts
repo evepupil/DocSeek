@@ -92,7 +92,7 @@ export function createCli(dependencies: CliDependencies = defaultDependencies): 
   program
     .command("search")
     .description("Locate relevant Markdown sections")
-    .argument("<query...>", "natural-language query")
+    .argument("<query...>", "divergent search terms or short phrases")
     .option("--top <number>", "maximum results", positiveInteger)
     .option("--path <path>", "limit results to matching paths")
     .option("--json", "print machine-readable JSON")
@@ -114,6 +114,7 @@ export function createCli(dependencies: CliDependencies = defaultDependencies): 
           dependencies.cwd(),
           {
             query,
+            queryParts,
             includeSnippet: options.snippet ?? false,
             includeExplanation: options.explain ?? false,
             ...(options.top !== undefined ? { top: options.top } : {}),

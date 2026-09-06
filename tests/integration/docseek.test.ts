@@ -212,6 +212,7 @@ describe("DocSeek integration", () => {
           }),
         ),
         diagnostics: z.object({
+          query_mode: z.enum(["natural", "terms"]),
           query_terms: z.array(z.string()),
           timings_ms: z.record(z.string(), z.number()),
         }),
@@ -219,6 +220,7 @@ describe("DocSeek integration", () => {
       .parse(explainedJson);
     expect(explainedExitCode).toBe(0);
     expect(explained.results).toHaveLength(1);
+    expect(explained.diagnostics.query_mode).toBe("terms");
     expect(explained.results[0]?.explanation.confidence).toBeGreaterThan(0);
     expect(explained.diagnostics.query_terms.length).toBeGreaterThan(0);
     expect(explained.diagnostics.timings_ms["total"]).toBeTypeOf("number");
@@ -295,7 +297,12 @@ describe("DocSeek integration", () => {
 
     const results = await searchDocs(
       project,
-      { query: "zxqv-9999 量子香蕉协议", top: 5, includeSnippet: false },
+      {
+        query: "zxqv-9999 量子香蕉协议",
+        queryParts: ["zxqv-9999", "量子香蕉协议"],
+        top: 5,
+        includeSnippet: false,
+      },
       createProvider,
     );
 

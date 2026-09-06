@@ -3,6 +3,9 @@ export const CONFIG_VERSION = 1 as const;
 export type EmbeddingDtype = "fp32" | "fp16" | "q8" | "int8" | "uint8" | "q4";
 export type SourceKind = "markdown-directory";
 export type DocumentMediaType = "text/markdown";
+export type SearchQueryMode = "natural" | "terms";
+export type ConfidenceReason =
+  "signal" | "dual-route" | "term-vector" | "term-keyword" | "rejected";
 
 export interface EmbeddingConfig {
   readonly provider: "transformers";
@@ -117,6 +120,7 @@ export interface StatusResult extends IndexChanges {
 
 export interface SearchRequest {
   readonly query: string;
+  readonly queryParts?: readonly string[];
   readonly top?: number;
   readonly path?: string;
   readonly includeSnippet: boolean;
@@ -134,6 +138,7 @@ export interface SearchExplanation {
   readonly lexicalStrength: number;
   readonly fusionStrength: number;
   readonly confidence: number;
+  readonly confidenceReason: ConfidenceReason;
 }
 
 export interface SearchResult {
@@ -155,6 +160,7 @@ export interface SearchTimings {
 }
 
 export interface SearchDiagnostics {
+  readonly queryMode: SearchQueryMode;
   readonly queryTerms: readonly string[];
   readonly vectorCandidates: number;
   readonly keywordCandidates: number;

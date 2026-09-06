@@ -172,6 +172,66 @@
       "id": "no-push-certificate",
       "category": "negative",
       "query": "iOS 推送证书过期后怎样续期"
+    },
+    {
+      "id": "no-cooking-terms",
+      "category": "negative",
+      "query": "红烧肉 糖色 炖煮",
+      "query_parts": ["红烧肉", "糖色", "炖煮"]
+    },
+    {
+      "id": "no-kubernetes-terms",
+      "category": "negative",
+      "query": "Kubernetes NetworkPolicy CNI",
+      "query_parts": ["Kubernetes", "NetworkPolicy", "CNI"]
+    },
+    {
+      "id": "no-push-certificate-terms",
+      "category": "negative",
+      "query": "APNs 推送证书 续期",
+      "query_parts": ["APNs", "推送证书", "续期"]
+    },
+    {
+      "id": "no-mars-tax-terms",
+      "category": "negative",
+      "query": "火星殖民 空气税 计费",
+      "query_parts": ["火星殖民", "空气税", "计费"]
+    },
+    {
+      "id": "no-medical-dose-terms",
+      "category": "negative",
+      "query": "儿童退烧药 剂量 用药",
+      "query_parts": ["儿童退烧药", "剂量", "用药"]
+    },
+    {
+      "id": "no-hotel-cancellation-terms",
+      "category": "negative",
+      "query": "hotel cancellation refund",
+      "query_parts": ["hotel", "cancellation", "refund"]
+    },
+    {
+      "id": "no-stock-tax-terms",
+      "category": "negative",
+      "query": "股票 再平衡 税务",
+      "query_parts": ["股票", "再平衡", "税务"]
+    },
+    {
+      "id": "no-video-codec-terms",
+      "category": "negative",
+      "query": "H.265 关键帧 GOP",
+      "query_parts": ["H.265", "关键帧", "GOP"]
+    },
+    {
+      "id": "no-vacation-policy-terms",
+      "category": "negative",
+      "query": "employee vacation approval",
+      "query_parts": ["employee", "vacation", "approval"]
+    },
+    {
+      "id": "no-quantum-banana-terms",
+      "category": "negative",
+      "query": "量子香蕉 握手协议 zxqv-9999",
+      "query_parts": ["量子香蕉", "握手协议", "zxqv-9999"]
     }
   ]
 }

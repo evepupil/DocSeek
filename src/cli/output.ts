@@ -3,7 +3,7 @@ import { formatSearchTree } from "./search-tree.js";
 
 function formatTimings(diagnostics: SearchDiagnostics): string {
   const { timings } = diagnostics;
-  return `Timing: embedding ${timings.embeddingMs.toFixed(1)} ms, vector ${timings.vectorSearchMs.toFixed(1)} ms, keyword ${timings.keywordSearchMs.toFixed(1)} ms, fusion ${timings.fusionMs.toFixed(1)} ms, total ${timings.totalMs.toFixed(1)} ms`;
+  return `Mode: ${diagnostics.queryMode}; timing: embedding ${timings.embeddingMs.toFixed(1)} ms, vector ${timings.vectorSearchMs.toFixed(1)} ms, keyword ${timings.keywordSearchMs.toFixed(1)} ms, fusion ${timings.fusionMs.toFixed(1)} ms, total ${timings.totalMs.toFixed(1)} ms`;
 }
 
 export function formatSearchText(
@@ -39,7 +39,7 @@ export function formatSearchText(
                   : undefined,
               ].filter((value) => value !== undefined);
               lines.push(
-                `      signals: semantic ${result.explanation.semanticStrength.toFixed(2)}, lexical ${result.explanation.lexicalStrength.toFixed(2)}, confidence ${result.explanation.confidence.toFixed(2)}${ranks.length > 0 ? `, ${ranks.join(", ")}` : ""}`,
+                `      signals: semantic ${result.explanation.semanticStrength.toFixed(2)}, lexical ${result.explanation.lexicalStrength.toFixed(2)}, confidence ${result.explanation.confidence.toFixed(2)}, trust ${result.explanation.confidenceReason}${ranks.length > 0 ? `, ${ranks.join(", ")}` : ""}`,
               );
             }
             return lines.join("\n");
@@ -71,6 +71,7 @@ export function formatSearchJson(
                 lexical_strength: result.explanation.lexicalStrength,
                 fusion_strength: result.explanation.fusionStrength,
                 confidence: result.explanation.confidence,
+                confidence_reason: result.explanation.confidenceReason,
               },
             }
           : {}),
@@ -78,6 +79,7 @@ export function formatSearchJson(
       ...(diagnostics
         ? {
             diagnostics: {
+              query_mode: diagnostics.queryMode,
               query_terms: diagnostics.queryTerms,
               vector_candidates: diagnostics.vectorCandidates,
               keyword_candidates: diagnostics.keywordCandidates,

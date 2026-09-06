@@ -4,13 +4,15 @@ import type { SearchRequest, SearchResponse, SearchResult } from "../domain/type
 import { loadProjectContext } from "../config/config-file.js";
 import { createEmbeddingProvider } from "../embedding/factory.js";
 import { locateInitializedProject } from "../project/find-root.js";
+import { classifyQueryMode } from "../search/query-mode.js";
 import { IndexStore } from "../storage/index-store.js";
 import { executeSearch } from "./execute-search.js";
 
-function emptySearchResponse(): SearchResponse {
+function emptySearchResponse(request: SearchRequest): SearchResponse {
   return {
     results: [],
     diagnostics: {
+      queryMode: classifyQueryMode(request.query, request.queryParts),
       queryTerms: [],
       vectorCandidates: 0,
       keywordCandidates: 0,
@@ -46,7 +48,7 @@ export async function searchDocsDetailed(
   const counts = store.counts(context.config.projectId);
   if (counts.chunks === 0) {
     store.close();
-    return emptySearchResponse();
+    return emptySearchResponse(request);
   }
 
   const provider = createProvider(context.config.embedding);

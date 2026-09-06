@@ -1,4 +1,9 @@
-import type { SearchCandidate, SearchConfig, SearchResult } from "../domain/types.js";
+import type {
+  SearchCandidate,
+  SearchConfig,
+  SearchQueryMode,
+  SearchResult,
+} from "../domain/types.js";
 import { scoreCandidate } from "./scoring.js";
 
 interface RankedCandidate {
@@ -11,6 +16,8 @@ export interface FusionOptions {
   readonly top?: number;
   readonly includeSnippet: boolean;
   readonly includeExplanation: boolean;
+  readonly allowTermRelaxation: boolean;
+  readonly queryMode: SearchQueryMode;
   readonly queryTerms: readonly string[];
   readonly config: SearchConfig;
 }
@@ -52,6 +59,8 @@ export function fuseCandidates(
         entry.vectorRank,
         entry.keywordRank,
         options.config,
+        options.queryMode,
+        options.allowTermRelaxation,
       ),
     }))
     .filter((entry) => entry.signals.trusted)

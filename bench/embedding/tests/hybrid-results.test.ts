@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { toRankedLocations } from "../src/hybrid-results.js";
-import type { BenchmarkChunk } from "../src/types.js";
+import { summarizeRouteCoverage, toRankedLocations } from "../src/hybrid-results.js";
+import type { BenchmarkChunk, QualityObservation } from "../src/types.js";
 
 const chunk: BenchmarkChunk = {
   id: 42,
@@ -48,5 +48,35 @@ describe("hybrid benchmark results", () => {
         [chunk],
       ),
     ).toThrow("absent from the benchmark corpus");
+  });
+
+  it("measures how many route hits survive fusion", () => {
+    const observation = (caseId: string, expectedRank?: number): QualityObservation => ({
+      caseId,
+      intentId: caseId,
+      kind: "single-term",
+      terms: [caseId],
+      ...(expectedRank !== undefined ? { expectedRank } : {}),
+      stable: true,
+      literalCandidateCount: 0,
+      literalExpectedMatch: false,
+      top: [],
+    });
+
+    expect(
+      summarizeRouteCoverage(
+        [observation("vector", 2), observation("keyword")],
+        [observation("vector"), observation("keyword", 1)],
+        [observation("vector", 3), observation("keyword")],
+      ),
+    ).toEqual({
+      vectorRecallAt5: 0.5,
+      keywordRecallAt5: 0.5,
+      unionRecallAt5: 1,
+      hybridRecallAt5: 0.5,
+      unionHits: 2,
+      retainedUnionHits: 1,
+      unionRetentionRateAt5: 0.5,
+    });
   });
 });

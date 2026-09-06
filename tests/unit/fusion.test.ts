@@ -40,6 +40,8 @@ function options(overrides?: { readonly explain?: boolean; readonly snippet?: bo
     top: 5,
     includeSnippet: overrides?.snippet ?? false,
     includeExplanation: overrides?.explain ?? false,
+    allowTermRelaxation: false,
+    queryMode: "natural" as const,
     queryTerms: ["relevant"],
     config: searchConfig,
   };
@@ -88,6 +90,39 @@ describe("fuseCandidates", () => {
     expect(results).toEqual([]);
   });
 
+  it("keeps bounded weak signals for term-style navigation", () => {
+    const semantic = candidate(1, "semantic.md", 1, "Generic model configuration", 0.2);
+    const keyword = candidate(2, "keyword.md", 1, "qualification");
+    const termOptions = {
+      ...options({ explain: true }),
+      allowTermRelaxation: true,
+      queryMode: "terms" as const,
+      queryTerms: ["cache", "dispatch", "qualification"],
+    };
+
+    const results = fuseCandidates([semantic], [keyword], termOptions);
+
+    expect(results.map((result) => result.path)).toEqual(["keyword.md", "semantic.md"]);
+    expect(results.map((result) => result.explanation?.confidenceReason)).toEqual([
+      "term-keyword",
+      "term-vector",
+    ]);
+  });
+
+  it("keeps the stricter confidence gate for natural-language queries", () => {
+    const semantic = candidate(1, "semantic.md", 1, "Generic model configuration", 0.2);
+    const keyword = candidate(2, "keyword.md", 1, "qualification");
+
+    const results = fuseCandidates([semantic], [keyword], {
+      ...options(),
+      allowTermRelaxation: false,
+      queryMode: "natural",
+      queryTerms: ["cache", "dispatch", "qualification"],
+    });
+
+    expect(results).toEqual([]);
+  });
+
   it("uses stable ordering and exposes absolute scores with optional diagnostics", () => {
     const results = fuseCandidates(
       [
@@ -114,6 +149,8 @@ describe("fuseCandidates", () => {
     const unlimited = fuseCandidates(vectorCandidates, [], {
       includeSnippet: false,
       includeExplanation: false,
+      allowTermRelaxation: false,
+      queryMode: "natural",
       queryTerms: ["relevant"],
       config: searchConfig,
     });
