@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "gate": "npm run typecheck && npm test && npm run build",
-    "benchmark": "npm run build && node dist/src/cli.js"
+    "benchmark": "npm run build && node dist/src/cli.js",
+    "benchmark:hybrid": "npm --prefix ../.. run build && npm run build && node dist/src/hybrid-cli.js"
   },
   "dependencies": {
     "@huggingface/transformers": "4.2.0",

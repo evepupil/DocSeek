@@ -165,7 +165,7 @@ function printSummary(results: readonly WorkerResult[]): void {
   const batchSizes = [...new Set(results.map((result) => result.batchSize))].sort(
     (left, right) => left - right,
   );
-  console.log("batch runs embed_ms[min/median/max] chunks/s peak_mib recall@5 top1 mrr");
+  console.log("batch runs embed_ms[min/median/max] chunks/s peak_mib recall@5 top1 mrr rescue@5");
   for (const batchSize of batchSizes) {
     const runs = successful.filter((result) => result.batchSize === batchSize);
     if (runs.length === 0) {
@@ -176,8 +176,9 @@ function printSummary(results: readonly WorkerResult[]): void {
     const throughput = summarizeNumbers(runs.map((run) => run.throughput.chunksPerSecond));
     const memory = summarizeNumbers(runs.map((run) => run.memory.peakRssMiB));
     const quality = runs[0]?.quality.metrics;
+    const sparse = runs[0]?.quality.sparse;
     console.log(
-      `${batchSize} ${runs.length} ${embedding.minimum.toFixed(0)}/${embedding.median.toFixed(0)}/${embedding.maximum.toFixed(0)} ${throughput.median.toFixed(1)} ${memory.maximum.toFixed(0)} ${quality?.recallAt5.toFixed(3) ?? "-"} ${quality?.top1.toFixed(3) ?? "-"} ${quality?.meanReciprocalRank.toFixed(3) ?? "-"}`,
+      `${batchSize} ${runs.length} ${embedding.minimum.toFixed(0)}/${embedding.median.toFixed(0)}/${embedding.maximum.toFixed(0)} ${throughput.median.toFixed(1)} ${memory.maximum.toFixed(0)} ${quality?.recallAt5.toFixed(3) ?? "-"} ${quality?.top1.toFixed(3) ?? "-"} ${quality?.meanReciprocalRank.toFixed(3) ?? "-"} ${sparse?.semanticRescueRateAt5.toFixed(3) ?? "-"}`,
     );
   }
   for (const failure of results.filter((result) => !result.ok)) {

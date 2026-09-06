@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "sla-breach-no-refund",
+      "query": "SLA违约退款",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+          "heading": "SLA 是尽力调度目标"
+        }
+      ]
+    },
+    {
+      "id": "worker-offline-retry",
+      "query": "机器掉线任务重试",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
+          "heading": "云端拥有长队列与整次重试"
+        }
+      ]
+    },
+    {
+      "id": "model-residency-scheduling",
+      "query": "模型常驻调度",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M2-全局能力池与模型驻留.md",
+          "heading": "模型驻留不直接等于任务资格"
+        }
+      ]
+    },
+    {
+      "id": "safe-scale-down-drain",
+      "query": "安全缩容排空",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+          "heading": "动作链与状态"
+        }
+      ]
+    },
+    {
+      "id": "worker-accept-capacity",
+      "query": "worker接单容量",
+      "expected": [
+        { "path": "inferforge-docs/模块设计/M2-弹性容量调配.md" },
+        { "path": "inferforge-docs/模块设计/M2-全局能力池与模型驻留.md" }
+      ]
+    },
+    {
+      "id": "artifact-upload-failure",
+      "query": "产物上传失败",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
+          "heading": "云端拥有长队列与整次重试"
+        },
+        { "path": "inferforge-docs/模块设计/M1-本机仿真与测试工程.md" }
+      ]
+    },
+    {
+      "id": "local-retry-journal",
+      "query": "任务重试账本",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
+          "heading": "本地任务账本"
+        },
+        { "path": "inferforge-docs/模块设计/M1-机队执行后端.md" }
+      ]
+    },
+    {
+      "id": "vast-auto-recruitment",
+      "query": "Vast自动招募",
+      "expected": [
+        { "path": "inferforge-docs/架构设计.md", "heading": "招募与定价" },
+        { "path": "inferforge-docs/模块设计/M2-弹性容量调配.md" }
+      ]
+    },
+    {
+      "id": "queue-estimated-wait",
+      "query": "队列预计等待时间",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+          "heading": "基线排程"
+        }
+      ]
+    },
+    {
+      "id": "unknown-paid-action",
+      "query": "花钱动作结果未知不能盲目重试",
+      "expected": [
+        { "path": "inferforge-docs/模块设计/M2-调度策略层.md" },
+        { "path": "inferforge-docs/模块设计/M2-弹性容量调配.md" }
+      ]
+    },
+    {
+      "id": "gpu-rental-cost-breakdown",
+      "query": "GPU租用成本拆分",
+      "expected": [{ "path": "inferforge-docs/预研/M1-Vast成本构成实测.md" }]
+    },
+    {
+      "id": "sla-safe-reorder",
+      "query": "SLA安全插队",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+          "heading": "插队必须保护所有人"
+        }
+      ]
+    },
+    {
+      "id": "avoid-duplicate-scale-out",
+      "query": "扩容时避免重复开机",
+      "expected": [{ "path": "inferforge-docs/模块设计/M2-弹性容量调配.md" }]
+    },
+    {
+      "id": "download-load-states",
+      "query": "模型下载和装载为什么分开",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M2-全局能力池与模型驻留.md",
+          "heading": "模型驻留状态"
+        }
+      ]
+    },
+    {
+      "id": "queue-start-boundary",
+      "query": "任务什么时候才算结束排队开始执行",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
+          "heading": "开工边界"
+        }
+      ]
+    },
+    {
+      "id": "preemption-retry-en",
+      "query": "worker preemption infrastructure retry policy",
+      "expected": [
+        { "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md" },
+        { "path": "inferforge-docs/模块设计/M1-本机仿真与测试工程.md" }
+      ]
+    },
+    {
+      "id": "idempotent-submit-en",
+      "query": "idempotent provider submission recovery after unknown outcome",
+      "expected": [
+        { "path": "inferforge-docs/模块设计/M0-应用用例与对账.md" },
+        { "path": "inferforge-docs/模块设计/M0-调度与派活.md" }
+      ]
+    },
+    {
+      "id": "artifact-retry-en",
+      "query": "retry an artifact upload without running inference again",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
+          "heading": "云端拥有长队列与整次重试"
+        },
+        { "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md" }
+      ]
+    }
+  ]
+}

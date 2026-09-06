@@ -1,167 +1,548 @@
 {
-  "version": 1,
-  "cases": [
+  "version": 2,
+  "intents": [
     {
-      "id": "sla-breach-no-refund",
-      "query": "SLA违约退款",
+      "id": "sla-breach-compensation",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
           "heading": "SLA 是尽力调度目标"
         }
-      ]
-    },
-    {
-      "id": "worker-offline-retry",
-      "query": "机器掉线任务重试",
-      "expected": [
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["赔付"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["SLA", "超时", "退款", "违约"] },
         {
-          "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
-          "heading": "云端拥有长队列与整次重试"
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["SLO", "breach", "compensation"]
         }
       ]
     },
     {
-      "id": "model-residency-scheduling",
-      "query": "模型常驻调度",
+      "id": "worker-disconnect-recovery",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
+          "heading": "断线不等于失败"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["断连"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["worker", "掉线", "续跑"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["preemption", "checkpoint", "resume"]
+        }
+      ]
+    },
+    {
+      "id": "model-residency-eligibility",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M2-全局能力池与模型驻留.md",
           "heading": "模型驻留不直接等于任务资格"
         }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["热机"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["缓存命中", "派活", "资格"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["resident", "warm", "scheduler"]
+        }
       ]
     },
     {
-      "id": "safe-scale-down-drain",
-      "query": "安全缩容排空",
+      "id": "safe-scale-down",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
           "heading": "动作链与状态"
         }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["drain"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["缩容", "关机", "占用任务"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["scale-in", "eviction", "graceful"]
+        }
       ]
     },
     {
-      "id": "worker-accept-capacity",
-      "query": "worker接单容量",
+      "id": "execution-slot-capacity",
       "expected": [
-        { "path": "inferforge-docs/模块设计/M2-弹性容量调配.md" },
-        { "path": "inferforge-docs/模块设计/M2-全局能力池与模型驻留.md" }
+        {
+          "path": "inferforge-docs/模块设计/M2-全局能力池与模型驻留.md",
+          "heading": "调度单位是执行槽"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["并发槽"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["worker", "接单", "容量"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["slot", "capacity", "lease"]
+        }
       ]
     },
     {
-      "id": "artifact-upload-failure",
-      "query": "产物上传失败",
+      "id": "artifact-upload-retry",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
           "heading": "云端拥有长队列与整次重试"
-        },
-        { "path": "inferforge-docs/模块设计/M1-本机仿真与测试工程.md" }
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["补传"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["产物", "上传失败", "重试"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["artifact", "retry", "inference"]
+        }
       ]
     },
     {
-      "id": "local-retry-journal",
-      "query": "任务重试账本",
+      "id": "local-task-journal",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
           "heading": "本地任务账本"
-        },
-        { "path": "inferforge-docs/模块设计/M1-机队执行后端.md" }
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["断点"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["本地", "恢复", "去重", "任务"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["checkpoint", "outbox", "cursor"]
+        }
       ]
     },
     {
       "id": "vast-auto-recruitment",
-      "query": "Vast自动招募",
       "expected": [
-        { "path": "inferforge-docs/架构设计.md", "heading": "招募与定价" },
-        { "path": "inferforge-docs/模块设计/M2-弹性容量调配.md" }
+        {
+          "path": "inferforge-docs/架构设计.md",
+          "heading": "招募与定价"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["抢机"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["Vast", "扩容", "租卡"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["provision", "bid", "autoscale"]
+        }
       ]
     },
     {
-      "id": "queue-estimated-wait",
-      "query": "队列预计等待时间",
+      "id": "queue-wait-estimate",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
           "heading": "基线排程"
         }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["ETA"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["排队", "预计", "等待", "容量"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["queue", "latency", "forecast"]
+        }
       ]
     },
     {
       "id": "unknown-paid-action",
-      "query": "花钱动作结果未知不能盲目重试",
       "expected": [
-        { "path": "inferforge-docs/模块设计/M2-调度策略层.md" },
-        { "path": "inferforge-docs/模块设计/M2-弹性容量调配.md" }
+        {
+          "path": "inferforge-docs/模块设计/M0-应用用例与对账.md",
+          "heading": "提交不确定时只处理原 Attempt"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["重放"] },
+        {
+          "id": "bundle",
+          "kind": "term-bundle",
+          "terms": ["外部动作", "未知", "重放", "花钱"]
+        },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["unknown-outcome", "idempotency", "side-effect"]
+        }
       ]
     },
     {
-      "id": "gpu-rental-cost-breakdown",
-      "query": "GPU租用成本拆分",
-      "expected": [{ "path": "inferforge-docs/预研/M1-Vast成本构成实测.md" }]
+      "id": "gpu-rental-cost",
+      "expected": [
+        {
+          "path": "inferforge-docs/预研/M1-Vast成本构成实测.md",
+          "heading": "一天的账单拆开看"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["租金"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["GPU", "磁盘", "带宽", "账单"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["rental", "storage", "egress", "billing"]
+        }
+      ]
     },
     {
-      "id": "sla-safe-reorder",
-      "query": "SLA安全插队",
+      "id": "safe-sla-reorder",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
           "heading": "插队必须保护所有人"
         }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["加塞"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["SLA", "插队", "饿死"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["priority", "starvation", "deadline"]
+        }
       ]
     },
     {
-      "id": "avoid-duplicate-scale-out",
-      "query": "扩容时避免重复开机",
-      "expected": [{ "path": "inferforge-docs/模块设计/M2-弹性容量调配.md" }]
+      "id": "duplicate-scale-out",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M2-弹性容量调配.md",
+          "heading": "在途容量属于未来供给"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["去重"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["申请中", "启动中", "容量"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["pending", "supply", "scale-out"]
+        }
+      ]
     },
     {
-      "id": "download-load-states",
-      "query": "模型下载和装载为什么分开",
+      "id": "model-download-load",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M2-全局能力池与模型驻留.md",
           "heading": "模型驻留状态"
         }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["预热"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["下载", "装载", "显存", "状态"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["prefetch", "load", "resident"]
+        }
       ]
     },
     {
       "id": "queue-start-boundary",
-      "query": "任务什么时候才算结束排队开始执行",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md",
           "heading": "开工边界"
         }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["开工"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["排队", "接单", "占槽"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["dispatching", "accepted", "running"]
+        }
       ]
     },
     {
-      "id": "preemption-retry-en",
-      "query": "worker preemption infrastructure retry policy",
+      "id": "idempotent-submit",
       "expected": [
-        { "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md" },
-        { "path": "inferforge-docs/模块设计/M1-本机仿真与测试工程.md" }
+        {
+          "path": "inferforge-docs/模块设计/M0-应用用例与对账.md",
+          "heading": "幂等键必须绑定同一份请求"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["幂等"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["request-id", "参数变化", "去重"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["idempotency-key", "payload", "conflict"]
+        }
       ]
     },
     {
-      "id": "idempotent-submit-en",
-      "query": "idempotent provider submission recovery after unknown outcome",
+      "id": "clock-skew",
       "expected": [
-        { "path": "inferforge-docs/模块设计/M0-应用用例与对账.md" },
-        { "path": "inferforge-docs/模块设计/M0-调度与派活.md" }
+        {
+          "path": "inferforge-docs/预研/M1-真机时钟偏差.md",
+          "heading": "根因"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["漂移"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["远程机器", "时间倒挂", "卡住"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["clock-skew", "causality", "timestamp"]
+        }
       ]
     },
     {
-      "id": "artifact-retry-en",
-      "query": "retry an artifact upload without running inference again",
+      "id": "stopped-disk-billing",
+      "expected": [
+        {
+          "path": "inferforge-docs/预研/M1-Vast成本构成实测.md",
+          "heading": "停机实例的尾巴"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["停机费"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["stopped", "磁盘费", "回收"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["idle-storage", "destroy", "billing"]
+        }
+      ]
+    },
+    {
+      "id": "postgres-conditional-update",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-PostgreSQL持久化.md",
+          "heading": "条件更新"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["CAS"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["状态机", "revision", "写冲突"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["compare-and-swap", "optimistic-lock", "stale"]
+        }
+      ]
+    },
+    {
+      "id": "storage-system-boundaries",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-PostgreSQL持久化.md",
+          "heading": "PostgreSQL、Redis 和 R2 的分工"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["持久化"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["数据库", "缓存", "对象存储"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["durable", "ephemeral", "blob"]
+        }
+      ]
+    },
+    {
+      "id": "presigned-url-persistence",
       "expected": [
         {
           "path": "inferforge-docs/模块设计/M1-Worker-Agent与Vast双通道.md",
-          "heading": "云端拥有长队列与整次重试"
-        },
-        { "path": "inferforge-docs/模块设计/M2-SLA队列与派活.md" }
+          "heading": "临时签名地址不落库"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["presign"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["上传地址", "过期", "数据库"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["presigned-url", "ttl", "credential"]
+        }
+      ]
+    },
+    {
+      "id": "tenant-identity",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-HTTP-API与DTO.md",
+          "heading": "Tenant 只能来自已验证身份"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["越权"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["tenant", "请求体", "鉴权"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["identity", "spoofing", "claims"]
+        }
+      ]
+    },
+    {
+      "id": "strict-api-contract",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-HTTP-API与DTO.md",
+          "heading": "输入严格、输出保守"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["多余字段"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["JSON", "校验", "未知参数"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["strict-decode", "schema", "compatibility"]
+        }
+      ]
+    },
+    {
+      "id": "api-key-hashing",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-access.md",
+          "heading": "进程内只存哈希"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["哈希"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["APIKey", "内存", "摘要"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["credential", "hash", "plaintext"]
+        }
+      ]
+    },
+    {
+      "id": "cost-duration-history",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M1-成本证据与对账.md",
+          "heading": "占用时长从事件历史抠"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["工时"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["任务结束", "事件", "占机时间"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["usage", "timeline", "terminal-state"]
+        }
+      ]
+    },
+    {
+      "id": "p80-duration",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M2-任务耗时统计与预测.md",
+          "heading": "执行时长取 p80"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["长尾"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["耗时", "分位数", "保守估计"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["p80", "percentile", "ETA"]
+        }
+      ]
+    },
+    {
+      "id": "admin-polling",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M3-管理数据接口.md",
+          "heading": "轮询优先"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["刷新"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["管理页", "实时", "刷新"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["polling", "SSE", "websocket"]
+        }
+      ]
+    },
+    {
+      "id": "price-snapshot",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M3-控制面数据模型.md",
+          "heading": "价格快照两次"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["快照"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["下单价", "派活价", "冻结"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["price-snapshot", "revenue", "cost"]
+        }
+      ]
+    },
+    {
+      "id": "self-owned-machine-identity",
+      "expected": [
+        {
+          "path": "inferforge-docs/模块设计/M5-自有机接入.md",
+          "heading": "机器身份要落盘复用"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["设备指纹"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["自有机", "身份", "落盘"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["machine-id", "restart", "stable"]
+        }
+      ]
+    },
+    {
+      "id": "gpu-cold-start",
+      "expected": [
+        {
+          "path": "inferforge-docs/预研/M1-运行镜像构建与启动耗时.md",
+          "heading": "3090 冷启动耗时"
+        }
+      ],
+      "probes": [
+        { "id": "single", "kind": "single-term", "terms": ["冷启动"] },
+        { "id": "bundle", "kind": "term-bundle", "terms": ["GPU", "拉镜像", "装模型", "就绪"] },
+        {
+          "id": "alternate",
+          "kind": "alternate-vocabulary",
+          "terms": ["cold-start", "RTX3090", "ready"]
+        }
       ]
     }
   ]

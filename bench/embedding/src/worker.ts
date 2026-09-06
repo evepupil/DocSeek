@@ -94,7 +94,7 @@ async function runBenchmark(config: WorkerConfig): Promise<BenchmarkRun> {
         rankings.push(rankLocations(corpus.chunks, embedded.vectors, queryVector));
         sampler.sample();
       }
-      observations.push(observeQuality(testCase.id, testCase.expected, rankings));
+      observations.push(observeQuality(testCase, rankings, corpus.chunks));
     }
     const quality = summarizeQuality(observations);
     const durationSeconds = documentEmbeddingMs / 1000;

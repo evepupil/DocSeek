@@ -61,6 +61,7 @@ export function loadCorpus(indexPath: string, limit?: number): CorpusSnapshot {
         startLine: row.start_line,
         endLine: row.end_line,
         contentHash: row.content_hash,
+        content: row.content,
         text: embeddingText(heading, row.content),
       };
     });

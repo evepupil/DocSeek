@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "created_at": "2026-09-06",
+  "status": "sparse-query-quality-screen-complete",
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "node": "v24.18.0",
+    "cpu": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "logical_processors": 16,
+    "total_memory_gib": 29.9,
+    "nvidia_runtime": false
+  },
+  "corpus": {
+    "source_revision": "260ee675370b22de233ab5a224dfd1a4d92bd17c",
+    "markdown_documents": 136,
+    "markdown_bytes": 1630013,
+    "chunks": 1677,
+    "benchmark_chunk_fingerprint": "d3f71fe4dc9baedb7e00d5652c4355e299ef9b66539f5617d11666b20a3d3ea0"
+  },
+  "suite": {
+    "path": "bench/embedding/cases/inferforge.json",
+    "sha256": "d885e5be897fd50cd006fa969ad53f92461f6946377564fbe59d2285b64a83ad",
+    "format_version": 2,
+    "intents": 30,
+    "probes": 90,
+    "unique_target_documents": 17,
+    "probe_kinds": {
+      "single-term": 30,
+      "term-bundle": 30,
+      "alternate-vocabulary": 30
+    },
+    "query_rule": "Each intent uses one isolated term, one 2-5 term divergent bundle, and one synonym, abbreviation, translation, or project-jargon probe. Complete natural-language questions are excluded.",
+    "target_rule": "Every accepted location includes a document path and heading.",
+    "literal_baseline": {
+      "method": "Case-insensitive fixed-substring OR across original Markdown chunk content, approximating divergent rg -F probes.",
+      "target_missed": 55,
+      "target_found_with_more_than_five_candidates": 33,
+      "target_found_with_at_most_five_candidates": 2,
+      "literal_target_rate": 0.3888888888888889
+    }
+  },
+  "legacy_suite": {
+    "path": "bench/embedding/cases/inferforge-paraphrase.json",
+    "sha256": "a399b93ccf5718c3da4f764f62d24d71f99113d3707649e904dbfb16c5ecf190",
+    "role": "secondary full-paraphrase comparison only"
+  },
+  "production_hybrid": {
+    "model": "Xenova/multilingual-e5-small",
+    "index_configuration": "current production weights, confidence filtering, and vector plus FTS fusion",
+    "recall_at_5": 0.26666666666666666,
+    "top_1": 0.1111111111111111,
+    "mrr": 0.1635185185185185,
+    "intent_any_recall_at_5": 0.6,
+    "semantic_rescue_hits_at_5": 3,
+    "semantic_rescue_rate_at_5": 0.05454545454545454,
+    "candidate_compression_hits_at_5": 19,
+    "candidate_compression_rate_at_5": 0.5757575757575758,
+    "by_kind": {
+      "single-term": { "recall_at_5": 0.26666666666666666, "semantic_rescue_rate_at_5": 0.045454545454545456 },
+      "term-bundle": { "recall_at_5": 0.43333333333333335, "semantic_rescue_rate_at_5": 0.25 },
+      "alternate-vocabulary": { "recall_at_5": 0.1, "semantic_rescue_rate_at_5": 0 }
+    },
+    "search_p50_ms": 57.349,
+    "search_p95_ms": 82.428,
+    "raw_result": "2026-09-06-docseek-hybrid-sparse.json",
+    "finding": "The current confidence and fusion layer drops sparse semantic candidates that rank inside the vector-only top five."
+  },
+  "models": [
+    {
+      "role": "control",
+      "model": "Xenova/multilingual-e5-small",
+      "configuration": "q8, 288 tokens, mean pooling, query/passage prefixes",
+      "document_embedding_ms": 96103,
+      "recall_at_5": 0.34444444444444444,
+      "top_1": 0.12222222222222222,
+      "mrr": 0.21189916366597256,
+      "intent_any_recall_at_5": 0.7,
+      "semantic_rescue_hits_at_5": 10,
+      "semantic_rescue_rate_at_5": 0.18181818181818182,
+      "candidate_compression_hits_at_5": 21,
+      "candidate_compression_rate_at_5": 0.6363636363636364,
+      "by_kind": {
+        "single-term": { "recall_at_5": 0.23333333333333334, "semantic_rescue_rate_at_5": 0.09090909090909091 },
+        "term-bundle": { "recall_at_5": 0.5666666666666667, "semantic_rescue_rate_at_5": 0.5 },
+        "alternate-vocabulary": { "recall_at_5": 0.23333333333333334, "semantic_rescue_rate_at_5": 0.16 }
+      },
+      "raw_result": "2026-09-06-e5-small-sparse-run1.json"
+    },
+    {
+      "role": "candidate",
+      "model": "sentence-transformers/static-similarity-mrl-multilingual-v1",
+      "configuration": "int8, 288 tokens, model-integrated mean pooling, 256 dimensions",
+      "document_embedding_ms": 2587,
+      "recall_at_5": 0.2111111111111111,
+      "top_1": 0.08888888888888889,
+      "mrr": 0.1530024444304929,
+      "intent_any_recall_at_5": 0.5333333333333333,
+      "semantic_rescue_hits_at_5": 3,
+      "semantic_rescue_rate_at_5": 0.05454545454545454,
+      "candidate_compression_hits_at_5": 15,
+      "candidate_compression_rate_at_5": 0.45454545454545453,
+      "by_kind": {
+        "single-term": { "recall_at_5": 0.2, "semantic_rescue_rate_at_5": 0.09090909090909091 },
+        "term-bundle": { "recall_at_5": 0.4, "semantic_rescue_rate_at_5": 0.125 },
+        "alternate-vocabulary": { "recall_at_5": 0.03333333333333333, "semantic_rescue_rate_at_5": 0 }
+      },
+      "raw_result": "2026-09-06-static-similarity-sparse-run1.json"
+    },
+    {
+      "role": "candidate",
+      "model": "onnx-community/bge-small-zh-v1.5-ONNX",
+      "configuration": "q8, 512 tokens, CLS pooling, no query instruction",
+      "document_embedding_ms": 58269,
+      "recall_at_5": 0.17777777777777778,
+      "top_1": 0.05555555555555555,
+      "mrr": 0.11058607649530175,
+      "intent_any_recall_at_5": 0.4666666666666667,
+      "semantic_rescue_hits_at_5": 6,
+      "semantic_rescue_rate_at_5": 0.10909090909090909,
+      "candidate_compression_hits_at_5": 10,
+      "candidate_compression_rate_at_5": 0.30303030303030304,
+      "by_kind": {
+        "single-term": { "recall_at_5": 0.2, "semantic_rescue_rate_at_5": 0.09090909090909091 },
+        "term-bundle": { "recall_at_5": 0.3, "semantic_rescue_rate_at_5": 0.375 },
+        "alternate-vocabulary": { "recall_at_5": 0.03333333333333333, "semantic_rescue_rate_at_5": 0.04 }
+      },
+      "raw_result": "2026-09-06-bge-small-zh-sparse-run1.json"
+    },
+    {
+      "role": "candidate",
+      "model": "ibm-granite/granite-embedding-97m-multilingual-r2",
+      "configuration": "official AVX2 int8 ONNX, 288 tokens, CLS pooling",
+      "document_embedding_ms": 142405,
+      "recall_at_5": 0.2111111111111111,
+      "top_1": 0.06666666666666667,
+      "mrr": 0.14334529125065998,
+      "intent_any_recall_at_5": 0.43333333333333335,
+      "semantic_rescue_hits_at_5": 8,
+      "semantic_rescue_rate_at_5": 0.14545454545454545,
+      "candidate_compression_hits_at_5": 11,
+      "candidate_compression_rate_at_5": 0.3333333333333333,
+      "by_kind": {
+        "single-term": { "recall_at_5": 0.06666666666666667, "semantic_rescue_rate_at_5": 0 },
+        "term-bundle": { "recall_at_5": 0.3333333333333333, "semantic_rescue_rate_at_5": 0.375 },
+        "alternate-vocabulary": { "recall_at_5": 0.23333333333333334, "semantic_rescue_rate_at_5": 0.2 }
+      },
+      "raw_result": "2026-09-06-granite-97m-sparse-run1.json"
+    }
+  ],
+  "selection": {
+    "model": "Xenova/multilingual-e5-small",
+    "production_changed": false,
+    "reason": "E5 leads every candidate in sparse Recall@5, intent coverage, semantic rescue, and noisy-candidate compression. Its absolute sparse recall remains low enough to require further retrieval improvement.",
+    "quality_floor_for_future_candidates": {
+      "recall_at_5": 0.34444444444444444,
+      "intent_any_recall_at_5": 0.7,
+      "semantic_rescue_rate_at_5": 0.18181818181818182,
+      "candidate_compression_rate_at_5": 0.6363636363636364,
+      "stability": 1
+    },
+    "production_follow_up": "Raise sparse hybrid recall without weakening the existing no-answer rejection gate.",
+    "milestone": "M7 remains in progress"
+  }
+}

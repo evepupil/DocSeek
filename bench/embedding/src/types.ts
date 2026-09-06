@@ -3,6 +3,8 @@ export type ProviderId =
 export type BenchmarkDtype = "fp32" | "fp16" | "q8" | "int8" | "uint8" | "q4";
 export type BatchingStrategy = "sequential" | "length-bucketed";
 export type PoolingStrategy = "mean" | "cls";
+export type SparseQueryKind = "single-term" | "term-bundle" | "alternate-vocabulary";
+export type QualityQueryKind = "legacy" | SparseQueryKind;
 
 export interface BenchmarkChunk {
   readonly id: number;
@@ -11,6 +13,7 @@ export interface BenchmarkChunk {
   readonly startLine: number;
   readonly endLine: number;
   readonly contentHash: string;
+  readonly content: string;
   readonly text: string;
 }
 
@@ -29,12 +32,15 @@ export interface ExpectedLocation {
 
 export interface QualityCase {
   readonly id: string;
+  readonly intentId: string;
+  readonly kind: QualityQueryKind;
+  readonly terms: readonly string[];
   readonly query: string;
   readonly expected: readonly ExpectedLocation[];
 }
 
 export interface QualitySuite {
-  readonly version: 1;
+  readonly version: 1 | 2;
   readonly cases: readonly QualityCase[];
 }
 
@@ -49,8 +55,13 @@ export interface RankedLocation {
 
 export interface QualityObservation {
   readonly caseId: string;
+  readonly intentId: string;
+  readonly kind: QualityQueryKind;
+  readonly terms: readonly string[];
   readonly expectedRank?: number;
   readonly stable: boolean;
+  readonly literalCandidateCount: number;
+  readonly literalExpectedMatch: boolean;
   readonly top: readonly RankedLocation[];
 }
 
@@ -61,8 +72,31 @@ export interface SemanticQualityMetrics {
   readonly stability: number;
 }
 
+export interface SparseKindMetrics extends SemanticQualityMetrics {
+  readonly kind: SparseQueryKind;
+  readonly probes: number;
+  readonly literalMisses: number;
+  readonly semanticRescueRateAt5: number;
+}
+
+export interface SparseNavigationMetrics {
+  readonly intents: number;
+  readonly probes: number;
+  readonly macroIntentRecallAt5: number;
+  readonly intentAnyRecallAt5: number;
+  readonly literalTargetRate: number;
+  readonly semanticRescueEligible: number;
+  readonly semanticRescueHitsAt5: number;
+  readonly semanticRescueRateAt5: number;
+  readonly candidateCompressionEligible: number;
+  readonly candidateCompressionHitsAt5: number;
+  readonly candidateCompressionRateAt5: number;
+  readonly byKind: readonly SparseKindMetrics[];
+}
+
 export interface SemanticQualityResult {
   readonly metrics: SemanticQualityMetrics;
+  readonly sparse?: SparseNavigationMetrics;
   readonly observations: readonly QualityObservation[];
 }
 
