@@ -139,15 +139,16 @@ inferforge-docs/
 
 ## 查询怎么写
 
-DocSeek 支持完整自然语言，也适合由多个概念短语组成的查询。Agent 上下文不足时，推荐把已知概念、缩写和可能的同义说法分别传入：
+优先像使用 `grep` / `rg` 一样发散候选词。Agent 不知道文档原词时，把可能相关的短词、同义词、缩写、翻译和项目黑话分别传入；完整问题留到读取原文后判断：
 
 ```bash
-docseek search "worker扩容" "冷启动时间" "SLA调度"
-docseek search "容量判断" "预计就绪时间" "排队SLA"
-docseek search "scheduler" "scale out" "cold start"
+docseek search "SLA" "违约" "退款" "赔付"
+docseek search "worker" "掉线" "preemption" "retry"
+docseek search "GPU" "扩容" "冷启动" "warm pool"
+docseek search "scheduler" "GPU" "cold start" "scale out"
 ```
 
-多个查询参数会按空格合并成一次检索。这样可以在不掌握文档原词的情况下扩大召回，同时让项目术语继续参与关键词匹配。
+多个查询参数会按空格合并成一次检索。第一次没有出现有用位置时继续换一组候选词；找到相关目录或文件后，再用 `--path` 或 `--top` 收窄。
 
 限制搜索范围或结果数量：
 

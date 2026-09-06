@@ -72,10 +72,19 @@ describe("managed DocSeek instructions", () => {
   it("puts index initialization before the search instruction", () => {
     const block = renderInstructionBlock();
     const initialization = block.indexOf("run `docseek init` first when uninitialized");
-    const search = block.indexOf('run `docseek search "<concept>" "<synonym>"`');
+    const search = block.indexOf("Use DocSeek like semantic `grep` / `rg`");
 
     expect(initialization).toBeGreaterThan(0);
     expect(search).toBeGreaterThan(initialization);
+  });
+
+  it("teaches divergent grep-style terms instead of full questions", () => {
+    const block = renderInstructionBlock();
+
+    expect(block).toContain("divergent candidate terms");
+    expect(block).toContain('docseek search "SLA" "违约" "退款" "赔付"');
+    expect(block).toContain("synonyms, abbreviations, translations, domain terms");
+    expect(block).toContain("Broaden the candidate terms when the first search misses");
   });
 
   it.each([

@@ -4,7 +4,7 @@
 - **对应代码**：`src/instructions/`、`scripts/postinstall.mjs`、`src/cli/create-cli.ts`、`src/markdown/`。
 - **所属 M 里程碑**：[M6 Agent 使用入口](../roadmap.md#m6-agent使用入口)。
 - **当前状态**：已完成。
-- **最近更新时间**：2026-09-04。
+- **最近更新时间**：2026-09-06。
 
 ## 职责与边界
 
@@ -33,15 +33,16 @@ Codex 路径依据 [OpenAI Docs 的全局 AGENTS.md 说明](https://learn.chatgp
 ## Documentation lookup with DocSeek
 
 - Before the first search in a project, run `docseek status`; run `docseek init` first when uninitialized, or `docseek update` when changes are pending.
-- When project documentation location or wording is unknown, run `docseek search "<concept>" "<synonym>"`.
-- Prefer short concepts, aliases, abbreviations, and domain terms. Multiple arguments form one query.
+- Use DocSeek like semantic `grep` / `rg`: search with divergent candidate terms instead of a complete natural-language question.
+- Start with 2-5 short candidates such as synonyms, abbreviations, translations, domain terms, and likely project jargon: `docseek search "SLA" "违约" "退款" "赔付"`.
+- Multiple arguments form one query. Broaden the candidate terms when the first search misses; use `--path` or `--top` only after useful locations appear.
 - Treat results as navigation and read the returned Markdown ranges before drawing conclusions.
-- Keep compact output by default. Add `--path` or `--top` to narrow; use `--json`, `--snippet`, or `--explain` only when needed.
+- Keep compact output by default; use `--json`, `--snippet`, or `--explain` only when needed.
 
 <!-- DOCSEEK:INSTRUCTIONS:END -->
 ```
 
-提示词只描述使用时机和可靠工作流，不介绍产品、不重复完整帮助、不注入当前用户或项目路径。
+提示词只描述使用时机和可靠工作流，不介绍产品、不重复完整帮助、不注入当前用户或项目路径。检索方式明确类比 `grep` / `rg`：先发散 2 至 5 个可能相关的短词、同义词、缩写、翻译和项目黑话，把完整判断留到读取原文之后。
 
 初始化检查必须排在搜索说明之前。Agent 在每个项目首次搜索前先运行 `status`；未初始化时先执行 `init`，存在待处理变化时先执行 `update`。
 
@@ -98,6 +99,8 @@ docseek instructions --install
 
 `docseek@0.2.0` 已发布到 npm。使用公网包覆盖安装后，真实 Codex 与 Claude 规则文件哈希保持不变，手工修复命令对两个目标均返回 `unchanged`，随后真实语义搜索成功。提示词第一条明确要求首次搜索前运行 `status`，未初始化时先执行 `init`。
 
+当前 `main` 已进一步明确 semantic grep 用法：Agent 先发散 2 至 5 个短词、同义词、缩写、翻译和项目黑话，多参数合并成一次查询；完整问题留到读取原文后判断。本机 Codex 与 Claude 的真实全局区块已经更新，第二次安装均返回 `unchanged`。该提示词会进入下一个 npm 版本。
+
 ## 验证方式
 
 - 空目录中创建两个正确目标文件。
@@ -109,6 +112,7 @@ docseek instructions --install
 - 一个目标失败时另一个继续完成。
 - npm 本地安装不注入，全局安装触发注入。
 - 手工命令输出与安装区块内容一致。
+- 提示词明确要求使用发散候选词，并包含多参数搜索示例。
 - Markdown 屏蔽后不检索提示词，区块后章节行号保持不变。
 - npm 发布包包含生命周期脚本、编译模块和有效命令入口。
 
@@ -124,3 +128,4 @@ docseek instructions --install
 - 2026-09-04：确认全局安装自动注入 Codex 与 Claude，闭合标签内替换，无标签时追加整段。
 - 2026-09-04：完成全局目标安全写入、`instructions` 命令、npm 生命周期入口、索引屏蔽和隔离包安装验证。
 - 2026-09-04：`docseek@0.2.0` 发布；公网全局安装、真实双目标幂等注入和语义搜索验证通过，实现提交为 `a64ed1f`。
+- 2026-09-06：全局提示词改为 semantic grep 用法，要求 Agent 使用发散候选词检索，避免用完整问题替代搜索词。
