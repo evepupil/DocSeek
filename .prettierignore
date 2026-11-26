@@ -6,3 +6,4 @@
 .codegraph
 package-lock.json
 bench/embedding/results/*.json
+web/**

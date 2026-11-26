@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DocSeek — 面向 AI Coding Agent 的本地语义文档定位工具</title>
+<meta name="description" content="自然语言与发散候选词进入，Markdown 文件、章节和行号返回。本地 Embedding + SQLite FTS5 混合检索，以紧凑导航树为 Agent 提供低上下文消耗的精准定位。">
+<meta property="og:title" content="DocSeek — 面向 AI Coding Agent 的本地语义文档定位工具">
+<meta property="og:description" content="检索是导航，而不是塞满上下文。sqlite-vec 向量与 FTS5 关键词双路融合，纯本地单进程 CLI，零后台服务、零 MCP 依赖。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/index.css">
+</head>
+<body data-surface="sodium">
+<a class="skip-link" href="#main">跳至正文内容</a>
+
+<header class="site-header" role="banner" data-surface="sodium" id="site-header">
+  <div class="grid header-grid">
+    <a class="logo-link" href="#/" aria-label="DocSeek 首页" id="header-logo-link"></a>
+    <nav class="main-nav" aria-label="主导航" id="header-nav"></nav>
+    <div class="header-actions-desktop">
+      <button type="button" class="btn-text t-micro u-anim" id="motion-toggle-desktop" aria-pressed="true">(动效: 开)</button>
+      <a class="github-icon-link t-micro" href="https://github.com/evepupil/DocSeek" target="_blank" rel="noopener noreferrer" aria-label="访问 DocSeek GitHub 仓库">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.27a11 11 0 0 0-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 0 1 .64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 0 1 0-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 0 1 0 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0 0 12 1.27Z"/></svg>
+        <span>GitHub</span>
+      </a>
+      <a class="btn-primary btn-sm t-small" href="#/quickstart"><span>快速开始</span></a>
+    </div>
+    <div class="menu-btn-wrap">
+      <a class="github-icon-link github-icon-mobile" href="https://github.com/evepupil/DocSeek" target="_blank" rel="noopener noreferrer" aria-label="访问 DocSeek GitHub 仓库">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.27a11 11 0 0 0-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 0 1 .64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 0 1 0-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 0 1 0 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0 0 12 1.27Z"/></svg>
+      </a>
+      <button type="button" class="menu-btn t-micro" id="menu-open-btn" aria-expanded="false" aria-controls="menu">(菜单)</button>
+    </div>
+  </div>
+</header>
+
+<div class="menu-overlay" id="menu" role="dialog" aria-modal="true" aria-label="导航菜单" data-surface="sodium">
+  <div class="menu-overlay-top grid">
+    <span class="col-1-3 t-micro">(菜单)</span>
+    <div class="menu-btn-wrap">
+      <button type="button" class="menu-btn t-micro" id="menu-close-btn">(关闭)</button>
+    </div>
+  </div>
+  <div class="grid">
+    <nav class="menu-overlay-links col-full" aria-label="移动端导航" id="menu-nav"></nav>
+    <div class="menu-overlay-footer col-full">
+      <button type="button" class="btn-text t-small u-anim" id="motion-toggle-mobile" aria-pressed="true">(动效: 开)</button>
+      <a class="github-icon-link t-small" href="https://github.com/evepupil/DocSeek" target="_blank" rel="noopener noreferrer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.27a11 11 0 0 0-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 0 1 .64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 0 1 0-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 0 1 0 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0 0 12 1.27Z"/></svg>
+        <span>evepupil/DocSeek</span>
+      </a>
+      <a class="btn-primary t-small" href="#/quickstart" id="menu-start-btn"><span>快速开始</span></a>
+    </div>
+  </div>
+</div>
+
+<main id="main" tabindex="-1"></main>
+
+<footer class="site-footer" role="contentinfo" data-surface="ink" id="site-footer"></footer>
+
+<button type="button" class="top-btn t-micro u-anim" id="top-btn" data-surface="sodium">(顶部)</button>
+<div id="tip" role="tooltip" class="t-micro"></div>
+<canvas id="trail-canvas" aria-hidden="true"></canvas>
+<canvas id="wipe-canvas" aria-hidden="true"></canvas>
+
+<script type="module" src="/src/app.js"></script>
+</body>
+</html>

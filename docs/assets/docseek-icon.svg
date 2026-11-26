@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="128" height="128" shape-rendering="crispEdges" role="img" aria-label="DocSeek Pixel Icon">
+  <rect x="0" y="0" width="16" height="16" fill="#0A0A0A"/>
+  <rect x="1" y="1" width="14" height="14" fill="#F3ACF0"/>
+  <!-- Corner pixel mark -->
+  <rect x="12" y="2" width="2" height="2" fill="#FFFFFF"/>
+  <!-- Pixel 'D' -->
+  <rect x="3" y="3" width="7" height="1" fill="#0A0A0A"/>
+  <rect x="3" y="4" width="2" height="6" fill="#0A0A0A"/>
+  <rect x="10" y="4" width="2" height="1" fill="#0A0A0A"/>
+  <rect x="11" y="5" width="2" height="3" fill="#0A0A0A"/>
+  <rect x="10" y="8" width="2" height="1" fill="#0A0A0A"/>
+  <rect x="3" y="9" width="7" height="1" fill="#0A0A0A"/>
+  <!-- Dual retrieval bars: sqlite-vec (blue) + FTS5 (green) -->
+  <rect x="3" y="11" width="5" height="2" fill="#2370E8"/>
+  <rect x="9" y="11" width="4" height="2" fill="#2BA676"/>
+</svg>

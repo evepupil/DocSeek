@@ -1,0 +1,22 @@
+{
+  "name": "docseek-web",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "predev": "[ -d node_modules/.bin ] || npm install",
+    "dev": "vite --port=3000 --host=0.0.0.0",
+    "prebuild": "[ -d node_modules/.bin ] || npm install",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prelint": "[ -d node_modules/.bin ] || npm install",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "vite": "^6.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "^5.8.2"
+  }
+}

@@ -12,6 +12,7 @@ export default tseslint.config(
       "bench/embedding/cache/**",
       "eslint.config.js",
       "scripts/**",
+      "web/**",
     ],
   },
   eslint.configs.recommended,

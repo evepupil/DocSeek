@@ -1,0 +1,6 @@
+{
+  "name": "DocSeek — 面向 AI Coding Agent 的本地语义文档定位工具",
+  "description": "自然语言与发散候选词进入，Markdown 文件、章节和行号返回。结合 sqlite-vec 语义向量与 SQLite FTS5 关键词召回，以紧凑导航树节省约 80% 上下文字符。",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

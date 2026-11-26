@@ -3,3 +3,5 @@ dist/
 coverage/
 *.tgz
 /.docseek/
+web/dist/
+web/node_modules/

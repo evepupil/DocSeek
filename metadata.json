@@ -1,0 +1,5 @@
+{
+  "name": "DocSeek",
+  "description": "Local semantic and keyword documentation locator for Markdown projects with compact navigation tree output.",
+  "requestFramePermissions": []
+}

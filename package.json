@@ -28,6 +28,8 @@
     "node": ">=22"
   },
   "scripts": {
+    "dev": "npm run build && node dist/server/index.js",
+    "start": "node dist/server/index.js",
     "build": "node scripts/clean.mjs && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" shape-rendering="crispEdges" role="img" aria-label="DocSeek — 面向 AI Coding Agent 的本地语义文档定位工具">
+  <style>
+    .sans { font-family: "Inter Tight", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  </style>
+
+  <!-- Outer Canvas (Sodium) & Border -->
+  <rect x="0" y="0" width="1200" height="360" fill="#F3ACF0"/>
+  <rect x="1.5" y="1.5" width="1197" height="357" fill="none" stroke="#0A0A0A" stroke-width="3"/>
+
+  <!-- Top Status Strip -->
+  <rect x="0" y="0" width="1200" height="44" fill="#0A0A0A"/>
+  <text x="28" y="27" fill="#F3ACF0" font-size="13" font-weight="600" class="mono">[DOCSEEK // v0.2.0]</text>
+  <text x="244" y="27" fill="#FFFFFF" font-size="12" font-weight="500" class="mono">LOCAL SEMANTIC DOCUMENTATION LOCATOR FOR CODING AGENTS</text>
+  <rect x="964" y="10" width="208" height="24" fill="#F3ACF0"/>
+  <text x="1068" y="26" text-anchor="middle" fill="#0A0A0A" font-size="12" font-weight="700" class="mono">NPM I -G DOCSEEK</text>
+
+  <!-- Right Panel Background (Paper) -->
+  <rect x="740" y="44" width="458.5" height="258" fill="#FFFFFF"/>
+  <line x1="740" y1="44" x2="740" y2="302" stroke="#0A0A0A" stroke-width="2"/>
+
+  <!-- Subtle Pixel Weave Accent on Left Panel -->
+  <g fill="#FFFFFF" opacity="0.55">
+    <rect x="668" y="64" width="8" height="8"/><rect x="684" y="64" width="8" height="8"/><rect x="700" y="64" width="8" height="8"/>
+    <rect x="676" y="72" width="8" height="8"/><rect x="692" y="72" width="8" height="8"/><rect x="708" y="72" width="8" height="8"/>
+    <rect x="668" y="80" width="8" height="8"/><rect x="684" y="80" width="8" height="8"/><rect x="700" y="80" width="8" height="8"/>
+    <rect x="676" y="88" width="8" height="8"/><rect x="692" y="88" width="8" height="8"/><rect x="708" y="88" width="8" height="8"/>
+  </g>
+
+  <!-- Exact DOCSEEK Pixel Bitmap Title (scaled 2.2x from 275x36 -> 605x79.2) -->
+  <g transform="translate(40, 86) scale(2.2)" fill="#0A0A0A">
+    <rect x="0" y="0" width="25" height="4.04"/><rect x="45" y="0" width="25" height="4.04"/><rect x="85" y="0" width="25" height="4.04"/><rect x="125" y="0" width="25" height="4.04"/><rect x="160" y="0" width="35" height="4.04"/><rect x="200" y="0" width="35" height="4.04"/><rect x="240" y="0" width="10" height="4.04"/><rect x="265" y="0" width="10" height="4.04"/>
+    <rect x="0" y="4" width="30" height="4.04"/><rect x="40" y="4" width="35" height="4.04"/><rect x="80" y="4" width="35" height="4.04"/><rect x="120" y="4" width="35" height="4.04"/><rect x="160" y="4" width="35" height="4.04"/><rect x="200" y="4" width="35" height="4.04"/><rect x="240" y="4" width="10" height="4.04"/><rect x="260" y="4" width="10" height="4.04"/>
+    <rect x="0" y="8" width="10" height="4.04"/><rect x="25" y="8" width="10" height="4.04"/><rect x="40" y="8" width="10" height="4.04"/><rect x="65" y="8" width="10" height="4.04"/><rect x="80" y="8" width="10" height="4.04"/><rect x="120" y="8" width="10" height="4.04"/><rect x="160" y="8" width="10" height="4.04"/><rect x="200" y="8" width="10" height="4.04"/><rect x="240" y="8" width="10" height="4.04"/><rect x="255" y="8" width="10" height="4.04"/>
+    <rect x="0" y="12" width="10" height="4.04"/><rect x="25" y="12" width="10" height="4.04"/><rect x="40" y="12" width="10" height="4.04"/><rect x="65" y="12" width="10" height="4.04"/><rect x="80" y="12" width="10" height="4.04"/><rect x="125" y="12" width="25" height="4.04"/><rect x="160" y="12" width="30" height="4.04"/><rect x="200" y="12" width="30" height="4.04"/><rect x="240" y="12" width="20" height="4.04"/>
+    <rect x="0" y="16" width="10" height="4.04"/><rect x="25" y="16" width="10" height="4.04"/><rect x="40" y="16" width="10" height="4.04"/><rect x="65" y="16" width="10" height="4.04"/><rect x="80" y="16" width="10" height="4.04"/><rect x="130" y="16" width="25" height="4.04"/><rect x="160" y="16" width="30" height="4.04"/><rect x="200" y="16" width="30" height="4.04"/><rect x="240" y="16" width="20" height="4.04"/>
+    <rect x="0" y="20" width="10" height="4.04"/><rect x="25" y="20" width="10" height="4.04"/><rect x="40" y="20" width="10" height="4.04"/><rect x="65" y="20" width="10" height="4.04"/><rect x="80" y="20" width="10" height="4.04"/><rect x="145" y="20" width="10" height="4.04"/><rect x="160" y="20" width="10" height="4.04"/><rect x="200" y="20" width="10" height="4.04"/><rect x="240" y="20" width="10" height="4.04"/><rect x="255" y="20" width="10" height="4.04"/>
+    <rect x="0" y="24" width="10" height="4.04"/><rect x="25" y="24" width="10" height="4.04"/><rect x="40" y="24" width="10" height="4.04"/><rect x="65" y="24" width="10" height="4.04"/><rect x="80" y="24" width="10" height="4.04"/><rect x="120" y="24" width="10" height="4.04"/><rect x="145" y="24" width="10" height="4.04"/><rect x="160" y="24" width="10" height="4.04"/><rect x="200" y="24" width="10" height="4.04"/><rect x="240" y="24" width="10" height="4.04"/><rect x="260" y="24" width="10" height="4.04"/>
+    <rect x="0" y="28" width="30" height="4.04"/><rect x="40" y="28" width="35" height="4.04"/><rect x="80" y="28" width="35" height="4.04"/><rect x="120" y="28" width="35" height="4.04"/><rect x="160" y="28" width="35" height="4.04"/><rect x="200" y="28" width="35" height="4.04"/><rect x="240" y="28" width="10" height="4.04"/><rect x="265" y="28" width="10" height="4.04"/>
+    <rect x="0" y="32" width="25" height="4.04"/><rect x="45" y="32" width="25" height="4.04"/><rect x="85" y="32" width="25" height="4.04"/><rect x="125" y="32" width="25" height="4.04"/><rect x="160" y="32" width="35" height="4.04"/><rect x="200" y="32" width="35" height="4.04"/><rect x="240" y="32" width="10" height="4.04"/><rect x="265" y="32" width="10" height="4.04"/>
+  </g>
+
+  <!-- Left Panel Headline & Subcopy -->
+  <text x="40" y="216" fill="#0A0A0A" font-size="24" font-weight="700" class="sans">面向 AI Coding Agent 的本地语义文档定位工具</text>
+  <text x="40" y="250" fill="#0A0A0A" font-size="14" font-weight="500" class="sans">自然语言与发散候选词进入，Markdown 文件、章节和行号以紧凑导航树返回。</text>
+  <rect x="40" y="268" width="16" height="6" fill="#2370E8"/>
+  <rect x="60" y="268" width="16" height="6" fill="#2BA676"/>
+  <rect x="80" y="268" width="16" height="6" fill="#A98BF7"/>
+  <rect x="100" y="268" width="16" height="6" fill="#FF5A5A"/>
+
+  <!-- Right Panel: 3 Spec Rows -->
+  <rect x="762" y="64" width="12" height="12" fill="#2370E8"/>
+  <text x="784" y="75" fill="#0A0A0A" font-size="13" font-weight="700" class="mono">01 / HYBRID RECALL</text>
+  <text x="762" y="102" fill="#0A0A0A" font-size="14" font-weight="500" class="sans">sqlite-vec (0.45) + FTS5 (0.55)，RRF k=8 融合</text>
+  <line x1="740" y1="130" x2="1198.5" y2="130" stroke="#0A0A0A" stroke-width="2"/>
+
+  <rect x="762" y="150" width="12" height="12" fill="#2BA676"/>
+  <text x="784" y="161" fill="#0A0A0A" font-size="13" font-weight="700" class="mono">02 / COMPACT TREE (-80%)</text>
+  <text x="762" y="188" fill="#0A0A0A" font-size="14" font-weight="500" class="sans">单分支 › 折叠，99 命中较 JSON 省 80% 字符</text>
+  <line x1="740" y1="216" x2="1198.5" y2="216" stroke="#0A0A0A" stroke-width="2"/>
+
+  <rect x="762" y="236" width="12" height="12" fill="#A98BF7"/>
+  <text x="784" y="247" fill="#0A0A0A" font-size="13" font-weight="700" class="mono">03 / ZERO-MCP PURE CLI</text>
+  <text x="762" y="274" fill="#0A0A0A" font-size="14" font-weight="500" class="sans">无后台服务，自动维护 Codex &amp; Claude 全局规则</text>
+
+  <!-- Bottom Protocol Bar -->
+  <rect x="1.5" y="302" width="1197" height="56.5" fill="#FFFFFF"/>
+  <line x1="0" y1="302" x2="1200" y2="302" stroke="#0A0A0A" stroke-width="2"/>
+
+  <rect x="28" y="316" width="16" height="28" fill="#2370E8"/>
+  <text x="54" y="335" fill="#0A0A0A" font-size="13" font-weight="700" class="mono">SQLITE-VEC (384D)</text>
+  <line x1="270" y1="302" x2="270" y2="358.5" stroke="#0A0A0A" stroke-width="2"/>
+
+  <rect x="294" y="316" width="16" height="28" fill="#2BA676"/>
+  <text x="320" y="335" fill="#0A0A0A" font-size="13" font-weight="700" class="mono">SQLITE FTS5 BIGRAMS</text>
+  <line x1="548" y1="302" x2="548" y2="358.5" stroke="#0A0A0A" stroke-width="2"/>
+
+  <rect x="572" y="316" width="16" height="28" fill="#A98BF7"/>
+  <text x="598" y="335" fill="#0A0A0A" font-size="13" font-weight="700" class="mono">MDAST HEADING CHUNKS</text>
+  <line x1="836" y1="302" x2="836" y2="358.5" stroke="#0A0A0A" stroke-width="2"/>
+
+  <rect x="860" y="316" width="16" height="28" fill="#FF5A5A"/>
+  <text x="886" y="335" fill="#0A0A0A" font-size="13" font-weight="700" class="mono">LOCAL E5-SMALL Q8 (118MB)</text>
+</svg>
